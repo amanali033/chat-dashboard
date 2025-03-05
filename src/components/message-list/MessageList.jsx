@@ -10,21 +10,34 @@ import {
 } from "@mui/material";
 
 const MessageList = ({ messages, selectedMessage, setSelectedMessage }) => {
+  const getContrastColor = (hex) => {
+    // Convert hex to RGB
+    const r = parseInt(hex.substring(1, 3), 16);
+    const g = parseInt(hex.substring(3, 5), 16);
+    const b = parseInt(hex.substring(5, 7), 16);
+
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+    // Return dark text for light backgrounds, white text for dark backgrounds
+    return luminance > 0.5 ? "#000000" : "#FFFFFF";
+  };
+
   return (
-    <Box
-      sx={{
-        borderRadius: 2,
-        height: "100vh",
-        overflowY: "auto",
-      }}
-    >
-      <List>
+    <Box sx={{ height: "100%" }}>
+      <List
+        sx={{
+          height: "calc(100vh - 175px) !important",
+          overflowY: "auto",
+        }}
+      >
         {messages.map((msg) => (
           <Box key={msg.id}>
             <ListItem
               button
               onClick={() => setSelectedMessage(msg)}
               sx={{
+                cursor: "pointer",
                 bgcolor: selectedMessage?.id === msg.id ? "#F4F5F7" : "white",
                 borderLeft:
                   selectedMessage?.id === msg.id
@@ -34,7 +47,12 @@ const MessageList = ({ messages, selectedMessage, setSelectedMessage }) => {
             >
               <ListItemAvatar>
                 <Avatar
-                  sx={{ bgcolor: msg.color, fontSize: 15, fontWeight: "bold" }}
+                  sx={{
+                    bgcolor: msg.color,
+                    color: "#333333",
+                    fontSize: 15,
+                    fontWeight: "bold",
+                  }}
                 >
                   {msg.initials}
                 </Avatar>

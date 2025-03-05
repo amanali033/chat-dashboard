@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -5,61 +6,53 @@ import {
   TextField,
   IconButton,
   InputAdornment,
+  useMediaQuery,
 } from "@mui/material";
-import { FaPhone, FaEnvelope, FaUser, FaRegPaperPlane } from "react-icons/fa";
+import {
+  FaPhone,
+  FaEnvelope,
+  FaUser,
+  FaArrowAltCircleDown,
+  FaArrowRight,
+  FaArrowLeft,
+} from "react-icons/fa";
 import SendIcon from "@mui/icons-material/Send";
+import RingLoader from "../loaders/RingLoader";
+import { dummyMessages as initialMessages } from "../../utils/data";
 
-const ChatView = ({ selectedChat }) => {
-  const dummyMessages = [
-    {
-      id: 1,
-      text: "Hey, are we still on for lunch tomorrow?",
+const ChatView = ({ selectedChat, onBack }) => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(""); // Track input field
+  const [messages, setMessages] = useState([]); // Store chat messages
+
+  useEffect(() => {
+    if (selectedChat) {
+      setLoading(true);
+
+      const timer = setTimeout(() => {
+        setLoading(false);
+        setMessages(initialMessages); // Load dummy messages when chat loads
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [selectedChat]);
+
+  const handleSendMessage = () => {
+    if (message.trim() === "") return; // Prevent sending empty messages
+
+    // Create a new message object
+    const newMessage = {
+      id: messages.length + 1,
+      text: message,
       sender: "user",
-      date: "Mar 1, 2024",
-    },
-    {
-      id: 2,
-      text: "Don't forget to bring the documents for the meeting.",
-      sender: "user",
-      date: "Mar 2, 2024",
-    },
-    {
-      id: 3,
-      text: "Reminder: Your package is out for delivery today.",
-      sender: "clinic",
-      date: "Mar 3, 2024",
-    },
-    {
-      id: 4,
-      text: "Hi, just checking in! How have you been?",
-      sender: "user",
-      date: "Mar 4, 2024",
-    },
-    {
-      id: 5,
-      text: "Your payment of $250 has been received. Thank you!",
-      sender: "clinic",
-      date: "Mar 5, 2024",
-    },
-    {
-      id: 6,
-      text: "Your flight to New York has been rescheduled to 6:30 PM.",
-      sender: "clinic",
-      date: "Mar 6, 2024",
-    },
-    {
-      id: 7,
-      text: "Meeting rescheduled to 10 AM instead of 9 AM.",
-      sender: "clinic",
-      date: "Mar 7, 2024",
-    },
-    {
-      id: 8,
-      text: "Your subscription will expire in 3 days. Renew now to continue services.",
-      sender: "clinic",
-      date: "Mar 8, 2024",
-    },
-  ];
+      date: new Date().toLocaleTimeString(),
+    };
+
+    setMessages([...messages, newMessage]); // Append message
+    setMessage(""); // Clear input after sending
+  };
 
   return (
     <Box display="flex" flexDirection="column" height="100vh" width="100%">
@@ -84,13 +77,66 @@ const ChatView = ({ selectedChat }) => {
             top={0}
             zIndex={10}
           >
-            <Avatar sx={{ bgcolor: selectedChat.color }}>
+            {isMobile && (
+              <IconButton
+                onClick={onBack}
+                sx={{
+                  backgroundColor: "#E3F2FD",
+                  color: "primary.main",
+                  borderRadius: "8px",
+                  "&:hover": {
+                    backgroundColor: "#BBDEFB",
+                  },
+                }}
+              >
+                <FaArrowLeft size="14px" />
+              </IconButton>
+            )}
+
+            <Avatar
+              sx={{
+                bgcolor: selectedChat.color,
+                color: "#333333",
+                fontSize: 15,
+                fontWeight: "bold",
+              }}
+            >
               {selectedChat?.initials}
             </Avatar>
             <Box flex={1}>
               <Typography fontWeight="bold">{selectedChat?.name}</Typography>
-              <Typography variant="body2" color="textSecondary">
-                Female • 51 • Active
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                display="flex"
+                alignItems="center"
+              >
+                Female • 51 •
+                <Box
+                  component="span"
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    backgroundColor: "#4CAF50", // Green color
+                    color: "white",
+                    padding: "2px 8px",
+                    borderRadius: "12px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    ml: 1, // Margin-left for spacing
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: "8px",
+                      height: "8px",
+                      borderRadius: "50%",
+                      backgroundColor: "white", // Inner small circle
+                    }}
+                  />
+                  Active
+                </Box>
               </Typography>
             </Box>
             <IconButton
@@ -123,40 +169,47 @@ const ChatView = ({ selectedChat }) => {
           </Box>
 
           {/* Chat Messages */}
-          <Box flex={1} overflow="auto" px={2} pb={8}>
-            {dummyMessages.map((msg) => (
-              <Box key={msg.id} mb={2} display="flex" flexDirection="column">
-                <Typography
-                  variant="caption"
-                  color="#6f7780"
-                  textAlign="center"
-                  p="2px 8px"
-                  borderRadius={2}
-                  mb={2}
-                  width="fit-content"
-                  mx="auto"
-                  sx={{
-                    backgroundColor: "#f3f4f6",
-                  }}
-                >
-                  {msg.date}
-                </Typography>
+          <Box flex={1} overflow="auto" pb={8} position="relative">
+            {loading ? (
+              <RingLoader />
+            ) : (
+              messages.map((msg) => (
                 <Box
-                  sx={{
-                    backgroundColor:
-                      msg.sender === "clinic" ? "#e8f5e9" : "#f3f4f6",
-                    p: "16px",
-                    borderRadius: "8px",
-                    maxWidth: "75%",
-                    alignSelf:
-                      msg.sender === "clinic" ? "flex-start" : "flex-end",
-                    ml: msg.sender !== "clinic" ? "auto" : "0",
-                  }}
+                  key={msg.id}
+                  mb={2}
+                  display="flex"
+                  flexDirection="column"
+                  px={2}
                 >
-                  <Typography variant="body2">{msg.text}</Typography>
+                  <Typography
+                    variant="caption"
+                    color="#6f7780"
+                    textAlign="center"
+                    p="2px 8px"
+                    borderRadius={2}
+                    mb={2}
+                    width="fit-content"
+                    mx="auto"
+                    sx={{ backgroundColor: "#f3f4f6" }}
+                  >
+                    {msg.date}
+                  </Typography>
+                  <Box
+                    sx={{
+                      backgroundColor:
+                        msg.sender === "clinic" ? "#e8f5e9" : "#f3f4f6",
+                      p: "12px 16px",
+                      borderRadius: "8px",
+                      maxWidth: "75%",
+                      alignSelf:
+                        msg.sender === "clinic" ? "flex-start" : "flex-end",
+                    }}
+                  >
+                    <Typography variant="body2">{msg.text}</Typography>
+                  </Box>
                 </Box>
-              </Box>
-            ))}
+              ))
+            )}
           </Box>
 
           {/* Input Field */}
@@ -177,20 +230,18 @@ const ChatView = ({ selectedChat }) => {
               size="small"
               multiline
               rows={4}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   border: "none",
                   outline: "none",
-                  paddingRight: "48px", // Ensure space for button
+                  paddingRight: "48px",
                   backgroundColor: "white",
                   padding: 0,
                 },
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
+                "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+                "&:hover .MuiOutlinedInput-notchedOutline": { border: "none" },
                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                   border: "none",
                 },
@@ -202,14 +253,22 @@ const ChatView = ({ selectedChat }) => {
                     sx={{ position: "absolute", bottom: 8, right: 8 }}
                   >
                     <IconButton
+                      onClick={handleSendMessage}
+                      // disabled={message.trim() === ""}
                       sx={{
-                        bgcolor: "primary.main",
-                        color: "white",
+                        bgcolor:
+                          message.trim() === "" ? "#E3F2FD" : "primary.main",
+                        color: message.trim() === "" ? "#90CAF9" : "white",
+                        cursor:
+                          message.trim() === "" ? "not-allowed" : "pointer",
                         borderRadius: 1,
-                        "&:hover": { bgcolor: "primary.dark" },
+                        "&:hover": {
+                          bgcolor:
+                            message.trim() === "" ? "#E3F2FD" : "primary.dark",
+                        },
                       }}
                     >
-                      <SendIcon sx={{ fontSize: 16 }} />{" "}
+                      <SendIcon sx={{ fontSize: 16 }} />
                     </IconButton>
                   </InputAdornment>
                 ),

@@ -1,16 +1,10 @@
 import { useState } from "react";
 import {
+  useMediaQuery,
   Box,
   Typography,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemAvatar,
-  Avatar,
-  Button,
-  Divider,
   IconButton,
+  Button,
 } from "@mui/material";
 import { faFilter, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,7 +19,7 @@ const messages = [
     initials: "KW",
     time: "10:52 PM",
     text: "Yes",
-    color: "teal",
+    color: "#A8E6CF",
   },
   {
     id: 2,
@@ -33,7 +27,7 @@ const messages = [
     initials: "IJ",
     time: "10:48 PM",
     text: "Confirm",
-    color: "pink",
+    color: "#FFCAD4",
   },
   {
     id: 3,
@@ -41,7 +35,7 @@ const messages = [
     initials: "JJ",
     time: "10:44 PM",
     text: "Yes",
-    color: "gray",
+    color: "#D3D3D3",
   },
   {
     id: 4,
@@ -49,98 +43,92 @@ const messages = [
     initials: "CW",
     time: "10:43 PM",
     text: "Okay",
-    color: "lightgray",
-  },
-  {
-    id: 5,
-    name: "Estelle Cann",
-    initials: "EC",
-    time: "10:40 PM",
-    text: "Yes",
-    color: "blue",
-  },
-  {
-    id: 6,
-    name: "Charmaine Griffin",
-    initials: "CG",
-    time: "10:36 PM",
-    text: "Yes",
-    color: "purple",
-  },
-  {
-    id: 7,
-    name: "Myron Williams",
-    initials: "MW",
-    time: "10:36 PM",
-    text: "yes",
-    color: "gray",
+    color: "#F5F5F5",
   },
 ];
 
 export default function Inbox() {
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const isMobile = useMediaQuery("(max-width: 600px)");
 
   return (
     <Box display="flex" height="100vh">
-      {/* Sidebar */}
-      <Box sx={{ width: 400, borderRight: "1px solid #ddd" }}>
-        {/* Header */}
+      {/* Show only message list on mobile, switch to chat when a message is selected */}
+      {(!isMobile || !selectedMessage) && (
         <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ mb: 2, p: "24px 16px 0px 16px" }}
+          sx={{ width: isMobile ? "100%" : 400, borderRight: "1px solid #ddd" }}
         >
-          <Typography variant="h5" fontWeight="bold">
-            Inbox
-          </Typography>
-          <Box display="flex" alignItems="center" gap="8px">
-            <Typography
-              color="primary"
-              sx={{ cursor: "pointer", fontSize: "16px", fontWeight: "bold" }}
-            >
-              Select
+          {/* Header */}
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ mb: 2, p: "24px 16px 0px 16px" }}
+          >
+            <Typography variant="h5" fontWeight="bold">
+              Inbox
             </Typography>
-            <IconButton>
-              <FontAwesomeIcon icon={faFilter} size="sm" />
-            </IconButton>
-            <IconButton>
-              <FontAwesomeIcon icon={faPenToSquare} size="sm" />
-            </IconButton>
+            <Box display="flex" alignItems="center" gap="8px">
+              <Typography
+                color="primary"
+                sx={{
+                  cursor: "pointer",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                  "&:hover": { textDecoration: "underline" },
+                }}
+              >
+                Select
+              </Typography>
+              <IconButton>
+                <FontAwesomeIcon icon={faFilter} size="xs" />
+              </IconButton>
+              <IconButton>
+                <FontAwesomeIcon icon={faPenToSquare} size="xs" />
+              </IconButton>
+            </Box>
           </Box>
-        </Box>
 
-        {/* Filter Buttons */}
-        <Box display="flex" gap={1} sx={{ mb: 2, px: "16px" }}>
-          {["Unread", "Unreplied", "Read", "Replied", "Error"].map((filter) => (
-            <Button
-              key={filter}
-              variant="outlined"
-              size="small"
-              sx={{
-                textTransform: "none",
-                border: "1px solid #6f7780",
-                color: "#202328",
-                p: "2px 8px",
-              }}
-            >
-              {filter}
-            </Button>
-          ))}
-        </Box>
+          {/* Filter Buttons */}
+          <Box display="flex" gap={1} sx={{ mb: 2, px: "16px" }}>
+            {["Unread", "Unreplied", "Read", "Replied", "Error"].map(
+              (filter) => (
+                <Button
+                  key={filter}
+                  variant="outlined"
+                  size="small"
+                  sx={{
+                    minWidth: "auto",
+                    textTransform: "none",
+                    border: "1px solid #6f7780",
+                    color: "#202328",
+                    p: "2px 8px",
+                  }}
+                >
+                  {filter}
+                </Button>
+              )
+            )}
+          </Box>
 
-        {/* Messages List */}
-        <MessageList
-          messages={messages}
-          selectedMessage={selectedMessage}
-          setSelectedMessage={setSelectedMessage}
+          {/* Messages List */}
+          <MessageList
+            messages={messages}
+            selectedMessage={selectedMessage}
+            setSelectedMessage={setSelectedMessage}
+          />
+        </Box>
+      )}
+
+      {/* Show chat only when a message is selected on mobile */}
+      {(!isMobile || selectedMessage) && (
+        <ChatView
+          selectedChat={selectedMessage}
+          onBack={() => setSelectedMessage(null)}
         />
-      </Box>
+      )}
 
-      {/* Chat View */}
-      <ChatView selectedChat={selectedMessage} />
-
-      <RightSidebar />
+      {!isMobile && <RightSidebar />}
     </Box>
   );
 }
