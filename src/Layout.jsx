@@ -17,29 +17,40 @@ import {
   faCog,
   faBars,
   faClose,
+  faPhone,
+  faPhoneVolume,
 } from "@fortawesome/free-solid-svg-icons";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/common/Header";
 import RightSidebar from "./components/right-side-bar";
 
 const menuItems = [
-  {
-    label: "Home",
-    icon: <FontAwesomeIcon icon={faHome} size="md" />,
-    subItems: [
-      { label: "Dashboard", path: "/dashboard" },
-      { label: "Analytics", path: "/analytics" },
-    ],
-  },
+  // {
+  //   label: "Home",
+  //   icon: <FontAwesomeIcon icon={faHome} size="md" />,
+  //   subItems: [
+  //     { label: "Dashboard", path: "/dashboard" },
+  //     { label: "Analytics", path: "/analytics" },
+  //   ],
+  // },
   {
     label: "Messages",
     icon: <FontAwesomeIcon icon={faCommentDots} size="md" />,
     subItems: [
-      { label: "Inbox", path: "/inbox" },
-      { label: "Scheduled", path: "/scheduled" },
-      { label: "Drafts", path: "/drafts" },
-      { label: "Archived", path: "/archived" },
-      { label: "Blocked", path: "/blocked" },
+      { label: "Inbox", path: "/messages/inbox" },
+      { label: "Scheduled", path: "/messages/scheduled" },
+      { label: "Drafts", path: "/messages/drafts" },
+      { label: "Archived", path: "/messages/archived" },
+      { label: "Blocked", path: "/messages/blocked" },
+    ],
+  },
+  {
+    label: "Calls",
+    icon: <FontAwesomeIcon icon={faPhoneVolume} size="md" />,
+    subItems: [
+      { label: "Recent Calls", path: "/calls/recent" },
+      { label: "Voicemails", path: "/calls/voicemails" },
+      { label: "Call Queue Data", path: "/calls/queue-data" },
     ],
   },
   // {
@@ -53,14 +64,23 @@ const menuItems = [
 ];
 
 export default function Layout() {
+  const navigate = useNavigate();
   const [selectedMenu, setSelectedMenu] = useState(menuItems[0]);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery("(max-width: 992px)");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
+  const handleMenuClick = (item) => {
+    setSelectedMenu(item);
+    if (item.subItems.length > 0) {
+      navigate(item.subItems[0].path);
+    }
+  };
+
   return (
     <>
       <Header isMobile={isMobile} handleDrawerToggle={handleDrawerToggle} />
@@ -119,7 +139,7 @@ export default function Layout() {
             <List
               sx={{
                 display: "flex",
-                py: 0,
+                py: isMobile ? 0 : "8px",
                 backgroundColor: "#e7ebee",
                 borderRadius: "0px 0.5em 0px 0px",
               }}
@@ -129,7 +149,7 @@ export default function Layout() {
                   <ListItem
                     button
                     key={index}
-                    onClick={() => setSelectedMenu(item)}
+                    onClick={() => handleMenuClick(item)}
                     className="menu_hover"
                     sx={{
                       flexDirection: "column",
@@ -242,7 +262,7 @@ export default function Layout() {
         {!isMobile && (
           <Box
             sx={{
-              width: 200,
+              minWidth: "200px",
               p: "0px 0.5em",
               display: "flex",
               flexDirection: "column",
@@ -293,6 +313,7 @@ export default function Layout() {
         >
           <Outlet />
         </Box>
+        {!isMobile && <RightSidebar />}
       </Box>
     </>
   );

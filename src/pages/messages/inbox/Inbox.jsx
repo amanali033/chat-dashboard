@@ -8,9 +8,9 @@ import {
 } from "@mui/material";
 import { faFilter, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ChatView from "../../components/chat-view/ChatView";
-import RightSidebar from "../../components/right-side-bar";
-import MessageList from "../../components/message-list/MessageList";
+import ChatView from "../../../components/chat-view/ChatView";
+import RightSidebar from "../../../components/right-side-bar";
+import MessageList from "../../../components/message-list/MessageList";
 
 const messages = [
   {
@@ -90,7 +90,11 @@ export default function Inbox() {
           </Box>
 
           {/* Filter Buttons */}
-          <Box display="flex" gap={1} sx={{ mb: 2, px: "16px" }}>
+          <Box
+            display="flex"
+            gap={1}
+            sx={{ mb: 2, px: "16px", overflowX: "auto", py: 1 }}
+          >
             {["Unread", "Unreplied", "Read", "Replied", "Error"].map(
               (filter) => (
                 <Button
@@ -128,7 +132,7 @@ export default function Inbox() {
         />
       )}
 
-      {!isMobile && <RightSidebar />}
+
     </Box>
   );
 }

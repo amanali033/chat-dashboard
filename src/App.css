@@ -17,8 +17,9 @@ body {
 }
 
 .MuiBackdrop-root {
-  background-color: rgba(29, 61, 112, 0.5) !important;
-  backdrop-filter: blur(2px);
+  background-color: transparent !important;
+  /* background-color: rgba(29, 61, 112, 0.5) !important; */
+  /* backdrop-filter: blur(2px); */
 }
 
 /* Loader CSS  */

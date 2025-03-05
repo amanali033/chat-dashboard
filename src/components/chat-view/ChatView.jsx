@@ -1,30 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Typography,
-  Avatar,
   TextField,
   IconButton,
   InputAdornment,
   useMediaQuery,
 } from "@mui/material";
-import {
-  FaPhone,
-  FaEnvelope,
-  FaUser,
-  FaArrowAltCircleDown,
-  FaArrowRight,
-  FaArrowLeft,
-} from "react-icons/fa";
+import { FaPhone, FaEnvelope, FaUser, FaArrowLeft } from "react-icons/fa";
 import SendIcon from "@mui/icons-material/Send";
 import RingLoader from "../loaders/RingLoader";
 import { dummyMessages as initialMessages } from "../../utils/data";
+import ColorAvatar from "../color-avatar/ColorAvatar";
 
 const ChatView = ({ selectedChat, onBack }) => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery("(max-width: 992px)");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(""); // Track input field
   const [messages, setMessages] = useState([]); // Store chat messages
+  const chatContainerRef = useRef(null); // Reference for chat messages container
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
 
   useEffect(() => {
     if (selectedChat) {
@@ -93,16 +96,7 @@ const ChatView = ({ selectedChat, onBack }) => {
               </IconButton>
             )}
 
-            <Avatar
-              sx={{
-                bgcolor: selectedChat.color,
-                color: "#333333",
-                fontSize: 15,
-                fontWeight: "bold",
-              }}
-            >
-              {selectedChat?.initials}
-            </Avatar>
+            <ColorAvatar name={selectedChat?.initials} />
             <Box flex={1}>
               <Typography fontWeight="bold">{selectedChat?.name}</Typography>
               <Typography
@@ -169,7 +163,14 @@ const ChatView = ({ selectedChat, onBack }) => {
           </Box>
 
           {/* Chat Messages */}
-          <Box flex={1} overflow="auto" pb={8} position="relative">
+          <Box
+            ref={chatContainerRef}
+            flex={1}
+            overflow="auto"
+            pt={2}
+            pb={8}
+            position="relative"
+          >
             {loading ? (
               <RingLoader />
             ) : (
@@ -232,6 +233,12 @@ const ChatView = ({ selectedChat, onBack }) => {
               rows={4}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault(); // Prevents a new line in the textarea
+                  handleSendMessage();
+                }
+              }}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   border: "none",
@@ -254,17 +261,16 @@ const ChatView = ({ selectedChat, onBack }) => {
                   >
                     <IconButton
                       onClick={handleSendMessage}
-                      // disabled={message.trim() === ""}
                       sx={{
                         bgcolor:
-                          message.trim() === "" ? "#E3F2FD" : "primary.main",
-                        color: message.trim() === "" ? "#90CAF9" : "white",
+                          message.trim() === "" ? "#9EC5FF" : "primary.main",
+                        color: "white",
                         cursor:
                           message.trim() === "" ? "not-allowed" : "pointer",
                         borderRadius: 1,
                         "&:hover": {
                           bgcolor:
-                            message.trim() === "" ? "#E3F2FD" : "primary.dark",
+                            message.trim() === "" ? "#9EC5FF" : "primary.dark",
                         },
                       }}
                     >

@@ -16,8 +16,8 @@ export default function RightSidebar() {
         p: 1,
         gap: 1,
         // height: "calc(100vh - 0px)", // Adjust drawer height
-        // marginTop: "64px",
-        borderLeft: "1px solid #DDE1E5",
+        marginTop: "64px",
+        borderTop: "1px solid #DDE1E5",
       }}
     >
       <IconButton

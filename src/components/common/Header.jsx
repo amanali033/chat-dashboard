@@ -10,6 +10,7 @@ import {
   Popover,
   MenuItem,
   ListItemIcon,
+  Select,
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,9 +21,18 @@ import {
   faEllipsisV,
   faBars, // Three-dots icon
 } from "@fortawesome/free-solid-svg-icons";
+import ColorAvatar from "../color-avatar/ColorAvatar";
+
+const locations = [
+  "Brown Deer Village",
+  "Greenfield",
+  "Wauwatosa",
+  "Brookfield",
+];
 
 export default function Header({ isMobile, handleDrawerToggle }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(locations[0]);
 
   // Open popover
   const handleOpenPopover = (event) => {
@@ -63,15 +73,61 @@ export default function Header({ isMobile, handleDrawerToggle }) {
         </Box>
 
         {/* Center: Location (Hidden on Small Screens) */}
+
         <Box
           display={{ xs: "none", md: "flex" }}
           alignItems="center"
-          gap={1}
+          gap={0}
           ml="auto"
           mr={2}
         >
           <FontAwesomeIcon icon={faMapMarkerAlt} size="md" />
-          <Typography variant="body1">Brown Deer Village</Typography>
+          <Select
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            size="small"
+            displayEmpty
+            renderValue={(selected) => (
+              <Typography
+                noWrap
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "block",
+                }}
+              >
+                {selected || "Select Location"}
+              </Typography>
+            )}
+            sx={{
+              border: "none",
+              outline: "none",
+              boxShadow: "none",
+              minWidth: "150px", // Set minimum width
+              maxWidth: "150px", // Set maximum width
+              "& fieldset": { border: "none" }, // Remove default border
+              "&:hover fieldset": { border: "none" },
+              "&.Mui-focused fieldset": { border: "none" }, // Remove focus border
+              "& .MuiOutlinedInput-root": {
+                padding: "6px 12px",
+              },
+              "& .MuiSelect-select": {
+                padding: "6px 12px",
+                display: "flex",
+                alignItems: "center",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+              },
+            }}
+          >
+            {locations.map((location, index) => (
+              <MenuItem key={index} value={location}>
+                {location}
+              </MenuItem>
+            ))}
+          </Select>
         </Box>
 
         {/* Right: Notifications, More Options, Avatar */}
@@ -92,7 +148,7 @@ export default function Header({ isMobile, handleDrawerToggle }) {
           </IconButton>
 
           {/* Avatar */}
-          <Avatar
+          {/* <Avatar
             sx={{
               bgcolor: "orangered",
               fontSize: 14,
@@ -102,7 +158,9 @@ export default function Header({ isMobile, handleDrawerToggle }) {
             }}
           >
             SC
-          </Avatar>
+          </Avatar> */}
+
+          <ColorAvatar name="SC" />
 
           {/* More Options Button (Three dots) */}
           <IconButton

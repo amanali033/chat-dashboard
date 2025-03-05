@@ -8,6 +8,7 @@ import {
   Typography,
   Divider,
 } from "@mui/material";
+import ColorAvatar from "../color-avatar/ColorAvatar";
 
 const MessageList = ({ messages, selectedMessage, setSelectedMessage }) => {
   const getContrastColor = (hex) => {
@@ -46,7 +47,7 @@ const MessageList = ({ messages, selectedMessage, setSelectedMessage }) => {
               }}
             >
               <ListItemAvatar>
-                <Avatar
+                {/* <Avatar
                   sx={{
                     bgcolor: msg.color,
                     color: "#333333",
@@ -55,7 +56,8 @@ const MessageList = ({ messages, selectedMessage, setSelectedMessage }) => {
                   }}
                 >
                   {msg.initials}
-                </Avatar>
+                </Avatar> */}
+                <ColorAvatar name={msg.initials} />
               </ListItemAvatar>
 
               <ListItemText
