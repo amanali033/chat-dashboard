@@ -81,7 +81,7 @@ export default function Header({ isMobile, handleDrawerToggle }) {
           ml="auto"
           mr={2}
         >
-          <FontAwesomeIcon icon={faMapMarkerAlt} size="md" />
+          <FontAwesomeIcon icon={faMapMarkerAlt} size="md" color="#146ef5" />
           <Select
             value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}

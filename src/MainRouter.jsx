@@ -8,11 +8,15 @@ import Layout from "./Layout";
 import Inbox from "./pages/messages/inbox/Inbox";
 import NotFound from "./pages/404";
 import RecentCalls from "./pages/calls/recent-calls/RecentCalls";
+import SignIn from "./pages/auth/sign-in/SignIn";
 
 export default function MainRouter() {
   return (
     <Router>
       <Routes>
+        {/* Auth Pages  */}
+        <Route path="/auth/sign-in" element={<SignIn />} />
+
         <Route path="/" element={<Layout />}>
           <Route path="/" element={<Navigate to="/messages/inbox" />} />
 

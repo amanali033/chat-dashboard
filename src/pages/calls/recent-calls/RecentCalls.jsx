@@ -92,7 +92,40 @@ function RecentCalls() {
   const tableContainerRef = useRef(null);
   const [playingId, setPlayingId] = useState(null);
   const [progress, setProgress] = useState({});
+  const [audioTime, setAudioTime] = useState({});
+  const [audioDurations, setAudioDurations] = useState({});
   const audioRef = useRef(new Audio());
+
+  const formatTime = (seconds) => {
+    const min = Math.floor(seconds / 60);
+    const sec = Math.floor(seconds % 60);
+    return `${min}:${sec < 10 ? "0" : ""}${sec}`;
+  };
+
+  useEffect(() => {
+    const audioElements = {};
+
+    fakeData.forEach((row) => {
+      const audio = new Audio(row.audioUrl);
+
+      audio.onloadedmetadata = () => {
+        setAudioTime((prev) => ({
+          ...prev,
+          [row.id]: `0:00 / ${formatTime(audio.duration)}`,
+        }));
+      };
+
+      audio.load(); // Load metadata
+      audioElements[row.id] = audio;
+    });
+
+    return () => {
+      // Cleanup
+      Object.values(audioElements).forEach((audio) => {
+        audio.onloadedmetadata = null;
+      });
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -117,11 +150,21 @@ function RecentCalls() {
   }, []);
 
   const handlePlayAudio = (row) => {
+    const dummyAudioUrl =
+      "https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3";
+
     if (playingId === row.id) {
       audioRef.current.pause();
       setPlayingId(null);
     } else {
-      audioRef.current.src = row.audioUrl;
+      audioRef.current.src = dummyAudioUrl;
+      audioRef.current.load(); // Ensure metadata loads
+      audioRef.current.onloadedmetadata = () => {
+        setAudioTime((prev) => ({
+          ...prev,
+          [row.id]: `0:00 / ${formatTime(audioRef.current.duration)}`,
+        }));
+      };
       audioRef.current.play();
       setPlayingId(row.id);
     }
@@ -130,9 +173,17 @@ function RecentCalls() {
   useEffect(() => {
     const updateProgress = () => {
       if (audioRef.current && playingId) {
-        const progressValue =
-          (audioRef.current.currentTime / audioRef.current.duration) * 100;
-        setProgress((prev) => ({ ...prev, [playingId]: progressValue }));
+        setProgress((prev) => ({
+          ...prev,
+          [playingId]:
+            (audioRef.current.currentTime / audioRef.current.duration) * 100,
+        }));
+        setAudioTime((prev) => ({
+          ...prev,
+          [playingId]: `${formatTime(
+            audioRef.current.currentTime
+          )} / ${formatTime(audioRef.current.duration)}`,
+        }));
       }
     };
 
@@ -251,62 +302,85 @@ function RecentCalls() {
               ))}
             </TableRow>
           </TableHead>
-
           <TableBody>
-            {paginatedData.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    <ColorAvatar name={row.initials} />
-
-                    {row.name}
-                  </div>
-                </TableCell>
-                <TableCell>{row.time}</TableCell>
-                <TableCell>{row.result}</TableCell>
-                <TableCell>{row.contact}</TableCell>
-                <TableCell>{row.office}</TableCell>
-                <TableCell>{row.user}</TableCell>
-                <TableCell>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 8 }}
-                  >
-                    <IconButton onClick={() => handlePlayAudio(row)}>
-                      {playingId === row.id ? <Pause /> : <PlayArrow />}
-                    </IconButton>
-                    <LinearProgress
-                      variant="determinate"
-                      value={progress[row.id] || 0}
-                      sx={{
-                        width: "100px",
-                        backgroundColor: "#b2bec3", // Optional: Set background color
-                        "& .MuiLinearProgress-bar": {
-                          backgroundColor: "black", // Set the progress bar color to black
-                        },
+            {paginatedData.length > 0 ? (
+              paginatedData.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell>
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 8 }}
+                    >
+                      <ColorAvatar name={row.initials} />
+                      {row.name}
+                    </div>
+                  </TableCell>
+                  <TableCell>{row.time}</TableCell>
+                  <TableCell>{row.result}</TableCell>
+                  <TableCell>{row.contact}</TableCell>
+                  <TableCell>{row.office}</TableCell>
+                  <TableCell>{row.user}</TableCell>
+                  <TableCell>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        backgroundColor: "white",
+                        padding: "0.20rem 1.5rem 0.20rem 0.75rem",
+                        border: "1px solid #ced3da",
+                        borderRadius: "30px",
+                        width: "fit-content",
                       }}
-                    />
-                  </div>
-                </TableCell>
-                {/* Sticky Action Cell */}
+                    >
+                      <IconButton onClick={() => handlePlayAudio(row)}>
+                        {playingId === row.id ? <Pause /> : <PlayArrow />}
+                      </IconButton>
+                      <LinearProgress
+                        variant="determinate"
+                        value={progress[row.id] || 0}
+                        sx={{
+                          width: "100px",
+                          backgroundColor: "#b2bec3",
+                          "& .MuiLinearProgress-bar": {
+                            backgroundColor: "black",
+                          },
+                        }}
+                      />
+                      <Typography variant="body2" sx={{ minWidth: 60 }}>
+                        {audioTime[row.id] || "0:00 / 0:00"}
+                      </Typography>
+                    </div>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      position: "sticky",
+                      right: 0,
+                      background: "#fff",
+                      zIndex: 3,
+                      boxShadow: isScrolledX
+                        ? "-5px 0px 10px rgba(0,0,0,0.1)"
+                        : "none",
+                    }}
+                  >
+                    <IconButton onClick={(e) => handleMenuOpen(e, row)}>
+                      <MoreVert />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow
+                sx={{ height: "calc(100vh - 320px)", borderBottom: "none" }}
+              >
                 <TableCell
-                  sx={{
-                    position: "sticky",
-                    right: 0,
-                    background: "#fff",
-                    zIndex: 3,
-                    boxShadow: isScrolledX
-                      ? "-5px 0px 10px rgba(0,0,0,0.1)"
-                      : "none",
-                  }}
+                  colSpan={8}
+                  align="center"
+                  sx={{ borderBottom: "none" }}
                 >
-                  <IconButton onClick={(e) => handleMenuOpen(e, row)}>
-                    <MoreVert />
-                  </IconButton>
+                  No recent calls found
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>
