@@ -22,6 +22,8 @@ import {
   faBars, // Three-dots icon
 } from "@fortawesome/free-solid-svg-icons";
 import ColorAvatar from "../color-avatar/ColorAvatar";
+import ProfilePopover from "./components/ProfilePopover";
+import NotificationPopover from "./components/NotificationPopover";
 
 const locations = [
   "Brown Deer Village",
@@ -133,44 +135,108 @@ export default function Header({ isMobile, handleDrawerToggle }) {
         {/* Right: Notifications, More Options, Avatar */}
         <Box display="flex" alignItems="center" gap={2}>
           {/* Notifications */}
-          <IconButton>
-            <Badge
-              badgeContent={99}
-              sx={{
-                "& .MuiBadge-badge": {
-                  backgroundColor: "#e74c3c",
-                  color: "#fff",
-                },
-              }}
-            >
-              <FontAwesomeIcon icon={faBell} size="sm" />
-            </Badge>
-          </IconButton>
+          <NotificationPopover />
 
           {/* Avatar */}
-          {/* <Avatar
+          <ProfilePopover />
+
+          {/* Popover Menu */}
+          <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClosePopover}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
             sx={{
-              bgcolor: "orangered",
-              fontSize: 14,
-              width: 32,
-              height: 32,
-              fontWeight: "bold",
+              mt: 1,
+              "& .MuiPaper-root": {
+                borderRadius: "4px", // Increased border radius
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)", // Soft shadow
+                minWidth: "160px", // Slightly wider for better spacing
+                p: 1, // Add padding inside
+              },
             }}
           >
-            SC
-          </Avatar> */}
-
-          <ColorAvatar name="SC" />
+            <Box display="flex" flexDirection="column">
+              <MenuItem
+                onClick={handleClosePopover}
+                sx={{ borderRadius: "8px" }}
+              >
+                <ListItemIcon>
+                  <FontAwesomeIcon icon={faCog} size="sm" color="#146ef5" />
+                </ListItemIcon>
+                Settings
+              </MenuItem>
+              <MenuItem
+                onClick={handleClosePopover}
+                sx={{ borderRadius: "8px" }}
+              >
+                <ListItemIcon>
+                  <FontAwesomeIcon
+                    icon={faMapMarkerAlt}
+                    size="sm"
+                    color="#146ef5"
+                  />
+                </ListItemIcon>
+                <Select
+                  value={selectedLocation}
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                  size="small"
+                  displayEmpty
+                  renderValue={(selected) => (
+                    <Typography
+                      noWrap
+                      sx={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        display: "block",
+                      }}
+                    >
+                      {selected || "Select Location"}
+                    </Typography>
+                  )}
+                  sx={{
+                    border: "none",
+                    outline: "none",
+                    boxShadow: "none",
+                    minWidth: "100px", // Set minimum width
+                    maxWidth: "100px", // Set maximum width
+                    "& fieldset": { border: "none" }, // Remove default border
+                    "&:hover fieldset": { border: "none" },
+                    "&.Mui-focused fieldset": { border: "none" }, // Remove focus border
+                    "& .MuiOutlinedInput-root": {
+                      padding: "6px 12px",
+                    },
+                    "& .MuiSelect-select": {
+                      padding: "0px",
+                      display: "flex",
+                      alignItems: "center",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis",
+                    },
+                  }}
+                >
+                  {locations.map((location, index) => (
+                    <MenuItem key={index} value={location}>
+                      {location}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </MenuItem>
+            </Box>
+          </Popover>
 
           {/* More Options Button (Three dots) */}
-          <IconButton
+          <Typography
             onClick={handleOpenPopover}
             sx={{
-              display: { xs: "block", md: "none" },
+              display: { xs: "block", md: "none",cursor:"pointer" },
             }}
           >
-            <FontAwesomeIcon icon={faEllipsisV} size="sm" />
-          </IconButton>
+            <FontAwesomeIcon icon={faEllipsisV} size="lg" color="#146EF5" />
+          </Typography>
         </Box>
       </Toolbar>
 
@@ -184,7 +250,7 @@ export default function Header({ isMobile, handleDrawerToggle }) {
         sx={{
           mt: 1,
           "& .MuiPaper-root": {
-            borderRadius: "12px", // Increased border radius
+            borderRadius: "4px", // Increased border radius
             boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)", // Soft shadow
             minWidth: "160px", // Slightly wider for better spacing
             p: 1, // Add padding inside
@@ -206,7 +272,52 @@ export default function Header({ isMobile, handleDrawerToggle }) {
                 color="#146ef5"
               />
             </ListItemIcon>
-            Location
+            <Select
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              size="small"
+              displayEmpty
+              renderValue={(selected) => (
+                <Typography
+                  noWrap
+                  sx={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    display: "block",
+                  }}
+                >
+                  {selected || "Select Location"}
+                </Typography>
+              )}
+              sx={{
+                border: "none",
+                outline: "none",
+                boxShadow: "none",
+                minWidth: "100px", // Set minimum width
+                maxWidth: "100px", // Set maximum width
+                "& fieldset": { border: "none" }, // Remove default border
+                "&:hover fieldset": { border: "none" },
+                "&.Mui-focused fieldset": { border: "none" }, // Remove focus border
+                "& .MuiOutlinedInput-root": {
+                  padding: "6px 12px",
+                },
+                "& .MuiSelect-select": {
+                  padding: "0px",
+                  display: "flex",
+                  alignItems: "center",
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                },
+              }}
+            >
+              {locations.map((location, index) => (
+                <MenuItem key={index} value={location}>
+                  {location}
+                </MenuItem>
+              ))}
+            </Select>
           </MenuItem>
         </Box>
       </Popover>

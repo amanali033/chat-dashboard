@@ -9,6 +9,9 @@ import Inbox from "./pages/messages/inbox/Inbox";
 import NotFound from "./pages/404";
 import RecentCalls from "./pages/calls/recent-calls/RecentCalls";
 import SignIn from "./pages/auth/sign-in/SignIn";
+import ForgotPassword from "./pages/auth/forgot-password/ForgotPassword";
+import ResetPassword from "./pages/auth/reset-password/ResetPassword";
+import ProtectedRoute from "./hooks/ProtectedRoute";
 
 export default function MainRouter() {
   return (
@@ -16,16 +19,24 @@ export default function MainRouter() {
       <Routes>
         {/* Auth Pages  */}
         <Route path="/auth/sign-in" element={<SignIn />} />
+        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
 
-        <Route path="/" element={<Layout />}>
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/" element={<Navigate to="/messages/inbox" />} />
-
-          {/* Messages Pages  */}
           <Route path="/messages/inbox" element={<Inbox />} />
-
-          {/* Calls Pages  */}
           <Route path="/calls/recent" element={<RecentCalls />} />
         </Route>
+
+        {/* 404 Page */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

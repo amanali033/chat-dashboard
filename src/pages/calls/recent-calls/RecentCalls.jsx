@@ -388,6 +388,16 @@ function RecentCalls() {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
+        
+        sx={{
+          mt: 1,
+          "& .MuiPaper-root": {
+            borderRadius: "4px", // Increased border radius
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)", // Soft shadow
+            // minWidth: "160px", // Slightly wider for better spacing
+            // p: 1, // Add padding inside
+          },
+        }}
       >
         <MenuItem onClick={handleMenuClose}>View Details</MenuItem>
         <MenuItem onClick={handleMenuClose}>Delete</MenuItem>

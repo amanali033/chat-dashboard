@@ -10,16 +10,54 @@ import {
 import { FaPhone, FaEnvelope, FaUser, FaArrowLeft } from "react-icons/fa";
 import SendIcon from "@mui/icons-material/Send";
 import RingLoader from "../loaders/RingLoader";
-import { dummyMessages as initialMessages } from "../../utils/data";
 import ColorAvatar from "../color-avatar/ColorAvatar";
+import { createAPIEndPoint } from "../../config/api/api";
+import toast from "react-hot-toast";
 
 const ChatView = ({ selectedChat, onBack }) => {
   const isMobile = useMediaQuery("(max-width: 992px)");
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState(""); // Track input field
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]); // Store chat messages
-  const chatContainerRef = useRef(null); // Reference for chat messages container
+  const chatContainerRef = useRef(null);
 
+  // Fetch messages from API
+  const getMessages = async () => {
+    try {
+      setLoading(true);
+      const response = await createAPIEndPoint(
+        `chat-messages?contact_number=${selectedChat.number}`
+      ).fetchAll();
+      const apiMessages = response.data || [];
+
+      // Transform messages to match expected structure
+      const formattedMessages = apiMessages.map((msg) => ({
+        id: msg.id,
+        text: msg.body,
+        sender: msg.direction === "outgoing" ? "user" : "clinic",
+        date: new Date(msg.created_at).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }),
+      }));
+
+      setMessages(formattedMessages);
+    } catch (err) {
+      console.log("Messages Error:", err.response);
+      toast.error(err?.response?.data?.error || "Error fetching messages");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedChat) {
+      getMessages();
+    }
+  }, [selectedChat]);
+
+  // Auto-scroll to bottom when messages update
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -29,32 +67,33 @@ const ChatView = ({ selectedChat, onBack }) => {
     }
   }, [messages]);
 
-  useEffect(() => {
-    if (selectedChat) {
-      setLoading(true);
+  const handleSendMessage = async () => {
+    if (message.trim() === "") return;
 
-      const timer = setTimeout(() => {
-        setLoading(false);
-        setMessages(initialMessages); // Load dummy messages when chat loads
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [selectedChat]);
-
-  const handleSendMessage = () => {
-    if (message.trim() === "") return; // Prevent sending empty messages
-
-    // Create a new message object
     const newMessage = {
-      id: messages.length + 1,
+      // id: messages.length + 1,
       text: message,
       sender: "user",
-      date: new Date().toLocaleTimeString(),
+      date: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }),
     };
 
-    setMessages([...messages, newMessage]); // Append message
-    setMessage(""); // Clear input after sending
+    // Optimistically update UI
+    setMessages([...messages, newMessage]);
+    setMessage("");
+
+    try {
+      await createAPIEndPoint("send-message").create({
+        to: selectedChat.number,
+        message,
+      });
+    } catch (error) {
+      console.error("Send Message Error:", error.response);
+      toast.error("Failed to send message");
+    }
   };
 
   return (
@@ -87,9 +126,7 @@ const ChatView = ({ selectedChat, onBack }) => {
                   backgroundColor: "#E3F2FD",
                   color: "primary.main",
                   borderRadius: "8px",
-                  "&:hover": {
-                    backgroundColor: "#BBDEFB",
-                  },
+                  "&:hover": { backgroundColor: "#BBDEFB" },
                 }}
               >
                 <FaArrowLeft size="14px" />
@@ -98,39 +135,8 @@ const ChatView = ({ selectedChat, onBack }) => {
 
             <ColorAvatar name={selectedChat?.initials} />
             <Box flex={1}>
-              <Typography fontWeight="bold">{selectedChat?.name}</Typography>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                display="flex"
-                alignItems="center"
-              >
-                Female • 51 •
-                <Box
-                  component="span"
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "4px",
-                    backgroundColor: "#4CAF50", // Green color
-                    color: "white",
-                    padding: "2px 8px",
-                    borderRadius: "12px",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                    ml: 1, // Margin-left for spacing
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      backgroundColor: "white", // Inner small circle
-                    }}
-                  />
-                  Active
-                </Box>
+              <Typography fontWeight="bold">
+                {selectedChat.number ? selectedChat.number : "Unknown"}
               </Typography>
             </Box>
             <IconButton
@@ -235,7 +241,7 @@ const ChatView = ({ selectedChat, onBack }) => {
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault(); // Prevents a new line in the textarea
+                  e.preventDefault();
                   handleSendMessage();
                 }
               }}
@@ -289,7 +295,7 @@ const ChatView = ({ selectedChat, onBack }) => {
           justifyContent="center"
           flex={1}
         >
-          <Typography variant="h6" color="textSecondary">
+          <Typography variant="h6" fontWeight="400" color="#424952">
             No chat selected
           </Typography>
         </Box>

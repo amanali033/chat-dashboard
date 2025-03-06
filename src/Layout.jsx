@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Drawer,
   List,
@@ -80,6 +80,10 @@ export default function Layout() {
       navigate(item.subItems[0].path);
     }
   };
+
+  useEffect(() => {
+    handleDrawerToggle();
+  }, [navigate]);
 
   return (
     <>

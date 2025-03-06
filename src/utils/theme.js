@@ -18,6 +18,10 @@ const theme = createTheme({
     body2: {
       color: "#202328",
     },
+    body3: {
+      color: "#6F7780",
+      fontSize: "14px"
+    },
   },
   components: {
     MuiButton: {
@@ -34,7 +38,7 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: "12px", // Softer edges for modals/cards
+          borderRadius: "4px", // Softer edges for modals/cards
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.05)", // Subtle shadow for elevation
         },
       },
@@ -43,7 +47,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           "& .MuiOutlinedInput-root": {
-            borderRadius: "8px", // Input fields with rounded edges
+            borderRadius: "4px", // Input fields with rounded edges
             "&:hover .MuiOutlinedInput-notchedOutline": {
               borderColor: "#146ef5",
             },
