@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Box, IconButton, Popover, Typography, Button } from "@mui/material";
+import { Box, IconButton, Popover, Typography, MenuItem } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-export default function RightSidebar() {
+export default function RightSidebar({ menuItems = [] }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -14,7 +14,7 @@ export default function RightSidebar() {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? "new-contact-popover" : undefined;
+  const id = open ? "menu-popover" : undefined;
 
   return (
     <Box
@@ -25,8 +25,18 @@ export default function RightSidebar() {
         alignItems: "center",
         p: 1,
         gap: 1,
-        marginTop: "64px",
-        borderTop: "1px solid #DDE1E5",
+        borderLeft: "1px solid #DDE1E5",
+
+        height: "100vh",
+        overflow: "hidden",
+        "@media (max-width:600px)": {
+          width: "50px",
+          height: "50px",
+          position: "fixed",
+          right: "10px",
+          bottom: "10px",
+          borderLeft: "0px",
+        },
       }}
     >
       <IconButton
@@ -43,36 +53,47 @@ export default function RightSidebar() {
         <AddIcon />
       </IconButton>
 
-      {/* Popover for New Contact */}
       <Popover
         id={id}
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+        transformOrigin={{ vertical: "top", horizontal: "left" }}
+        sx={{
+          mt: 1,
+          "& .MuiPaper-root": {
+            borderRadius: "4px",
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
+            minWidth: "160px",
+            py: 1,
+          },
         }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        sx={{ mt: 1 }}
       >
-        <Box sx={{ p: 2, minWidth: 200 }}>
-          <Typography variant="h6">New Contact</Typography>
-          <Typography variant="body2" color="textSecondary">
-            Add a new contact to your list.
-          </Typography>
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 2 }}
-            onClick={handleClose}
-          >
-            Add Contact
-          </Button>
-        </Box>
+        <div>
+          {menuItems.length > 0 ? (
+            menuItems.map((item, index) => (
+              <MenuItem
+                key={index}
+                onClick={() => {
+                  handleClose();
+                  item.onClick && item.onClick();
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "6px 24px",
+                }}
+              >
+                <Typography variant="body1">{item.label}</Typography>
+              </MenuItem>
+            ))
+          ) : (
+            <Typography variant="body2" sx={{ p: 2, textAlign: "center" }}>
+              No menu items available
+            </Typography>
+          )}
+        </div>
       </Popover>
     </Box>
   );

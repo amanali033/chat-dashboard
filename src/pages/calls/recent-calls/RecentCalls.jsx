@@ -28,6 +28,7 @@ import {
 } from "@mui/icons-material";
 import ColorAvatar from "../../../components/color-avatar/ColorAvatar";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import RightSidebar from "../../../components/right-side-bar";
 
 const fakeData = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
@@ -216,232 +217,248 @@ function RecentCalls() {
   }, []);
 
   return (
-    <Card
-      sx={{
-        mb: 2,
-        p: "24px 16px 8px 16px",
-        boxShadow: "none",
-        borderRadius: 0,
-      }}
-    >
-      <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
-        Recent Calls
-      </Typography>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 16,
-        }}
-      >
-        <FormControl size="small">
-          <Select defaultValue="Time Period">
-            <MenuItem value="Time Period">Time Period</MenuItem>
-          </Select>
-        </FormControl>
-        <div style={{ display: "flex", gap: 8 }}>
-          <TextField
-            size="small"
-            placeholder="Search name or 10-digit number"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <IconButton>
-            <FilterList />
-          </IconButton>
-          <IconButton>
-            <Download />
-          </IconButton>
-        </div>
-      </div>
-      <TableContainer
-        ref={tableContainerRef}
+    <>
+      <Card
         sx={{
-          border: "1px solid #ced3da",
-          borderRadius: "8px",
-          overflowY: "auto",
-          height: "calc(100vh - 261px)",
+          mb: 2,
+          p: "24px 16px 8px 16px",
+          boxShadow: "none",
+          borderRadius: 0,
         }}
       >
-        <Table stickyHeader>
-          <TableHead
-            sx={{
-              position: "sticky",
-              top: 0,
-              background: "#fff",
-              zIndex: 10,
-              boxShadow: isScrolled
-                ? "rgba(49, 53, 61, 0.19) 0px 4px 4px 0px"
-                : "none",
-              transition: "box-shadow 0.2s ease-in-out",
-            }}
-          >
-            <TableRow>
-              {tableHeaders.map((header, index) => (
-                <TableCell
-                  key={index}
-                  sx={{
-                    color: "#6f7780",
-                    fontWeight: "400",
-                    borderRight:
-                      index !== tableHeaders.length - 1
-                        ? "1px solid #ced3da"
-                        : "none",
-                  }}
-                >
-                  {header}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedData.length > 0 ? (
-              paginatedData.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 8 }}
-                    >
-                      <ColorAvatar name={row.initials} />
-                      {row.name}
-                    </div>
-                  </TableCell>
-                  <TableCell>{row.time}</TableCell>
-                  <TableCell>{row.result}</TableCell>
-                  <TableCell>{row.contact}</TableCell>
-                  <TableCell>{row.office}</TableCell>
-                  <TableCell>{row.user}</TableCell>
-                  <TableCell>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 8,
-                        backgroundColor: "white",
-                        padding: "0.20rem 1.5rem 0.20rem 0.75rem",
-                        border: "1px solid #ced3da",
-                        borderRadius: "30px",
-                        width: "fit-content",
-                      }}
-                    >
-                      <IconButton onClick={() => handlePlayAudio(row)}>
-                        {playingId === row.id ? <Pause /> : <PlayArrow />}
-                      </IconButton>
-                      <LinearProgress
-                        variant="determinate"
-                        value={progress[row.id] || 0}
-                        sx={{
-                          width: "100px",
-                          backgroundColor: "#b2bec3",
-                          "& .MuiLinearProgress-bar": {
-                            backgroundColor: "black",
-                          },
-                        }}
-                      />
-                      <Typography variant="body2" sx={{ minWidth: 60 }}>
-                        {audioTime[row.id] || "0:00 / 0:00"}
-                      </Typography>
-                    </div>
-                  </TableCell>
+        <Typography variant="h5" fontWeight="bold" sx={{ mb: 2 }}>
+          Recent Calls
+        </Typography>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 16,
+          }}
+        >
+          <FormControl size="small">
+            <Select defaultValue="Time Period">
+              <MenuItem value="Time Period">Time Period</MenuItem>
+            </Select>
+          </FormControl>
+          <div style={{ display: "flex", gap: 8 }}>
+            <TextField
+              size="small"
+              placeholder="Search name or 10-digit number"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <IconButton>
+              <FilterList />
+            </IconButton>
+            <IconButton>
+              <Download />
+            </IconButton>
+          </div>
+        </div>
+        <TableContainer
+          ref={tableContainerRef}
+          sx={{
+            border: "1px solid #ced3da",
+            borderRadius: "8px",
+            overflowY: "auto",
+            height: "calc(100vh - 261px)",
+          }}
+        >
+          <Table stickyHeader>
+            <TableHead
+              sx={{
+                position: "sticky",
+                top: 0,
+                background: "#fff",
+                zIndex: 10,
+                boxShadow: isScrolled
+                  ? "rgba(49, 53, 61, 0.19) 0px 4px 4px 0px"
+                  : "none",
+                transition: "box-shadow 0.2s ease-in-out",
+              }}
+            >
+              <TableRow>
+                {tableHeaders.map((header, index) => (
                   <TableCell
+                    key={index}
                     sx={{
-                      position: "sticky",
-                      right: 0,
-                      background: "#fff",
-                      zIndex: 3,
-                      boxShadow: isScrolledX
-                        ? "-5px 0px 10px rgba(0,0,0,0.1)"
-                        : "none",
+                      color: "#6f7780",
+                      fontWeight: "400",
+                      borderRight:
+                        index !== tableHeaders.length - 1
+                          ? "1px solid #ced3da"
+                          : "none",
                     }}
                   >
-                    <IconButton onClick={(e) => handleMenuOpen(e, row)}>
-                      <MoreVert />
-                    </IconButton>
+                    {header}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginatedData.length > 0 ? (
+                paginatedData.map((row) => (
+                  <TableRow key={row.id}>
+                    <TableCell>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                        }}
+                      >
+                        <ColorAvatar name={row.initials} />
+                        {row.name}
+                      </div>
+                    </TableCell>
+                    <TableCell>{row.time}</TableCell>
+                    <TableCell>{row.result}</TableCell>
+                    <TableCell>{row.contact}</TableCell>
+                    <TableCell>{row.office}</TableCell>
+                    <TableCell>{row.user}</TableCell>
+                    <TableCell>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          backgroundColor: "white",
+                          padding: "0.20rem 1.5rem 0.20rem 0.75rem",
+                          border: "1px solid #ced3da",
+                          borderRadius: "30px",
+                          width: "fit-content",
+                        }}
+                      >
+                        <IconButton onClick={() => handlePlayAudio(row)}>
+                          {playingId === row.id ? <Pause /> : <PlayArrow />}
+                        </IconButton>
+                        <LinearProgress
+                          variant="determinate"
+                          value={progress[row.id] || 0}
+                          sx={{
+                            width: "100px",
+                            backgroundColor: "#b2bec3",
+                            "& .MuiLinearProgress-bar": {
+                              backgroundColor: "black",
+                            },
+                          }}
+                        />
+                        <Typography variant="body2" sx={{ minWidth: 60 }}>
+                          {audioTime[row.id] || "0:00 / 0:00"}
+                        </Typography>
+                      </div>
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        position: "sticky",
+                        right: 0,
+                        background: "#fff",
+                        zIndex: 3,
+                        boxShadow: isScrolledX
+                          ? "-5px 0px 10px rgba(0,0,0,0.1)"
+                          : "none",
+                      }}
+                    >
+                      <IconButton onClick={(e) => handleMenuOpen(e, row)}>
+                        <MoreVert />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow
+                  sx={{ height: "calc(100vh - 320px)", borderBottom: "none" }}
+                >
+                  <TableCell
+                    colSpan={8}
+                    align="center"
+                    sx={{ borderBottom: "none" }}
+                  >
+                    No recent calls found
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow
-                sx={{ height: "calc(100vh - 320px)", borderBottom: "none" }}
-              >
-                <TableCell
-                  colSpan={8}
-                  align="center"
-                  sx={{ borderBottom: "none" }}
-                >
-                  No recent calls found
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        
-        sx={{
-          mt: 1,
-          "& .MuiPaper-root": {
-            borderRadius: "4px", // Increased border radius
-            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)", // Soft shadow
-            // minWidth: "160px", // Slightly wider for better spacing
-            // p: 1, // Add padding inside
-          },
-        }}
-      >
-        <MenuItem onClick={handleMenuClose}>View Details</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
-      </Menu>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginTop: 16,
-        }}
-      >
-        <FormControl size="small">
-          <Select
-            value={rowsPerPage}
-            onChange={(e) => setRowsPerPage(Number(e.target.value))}
-          >
-            {[10, 25, 50].map((num) => (
-              <MenuItem key={num} value={num}>
-                {num}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <div>
-          <IconButton
-            disabled={page === 0}
-            onClick={() => setPage(page - 1)}
-            sx={{ mr: 1 }}
-          >
-            <ChevronLeft />
-          </IconButton>
-          <span>Page {page + 1}</span>
-          <IconButton
-            disabled={page >= Math.ceil(filteredData.length / rowsPerPage) - 1}
-            onClick={() => setPage(page + 1)}
-            sx={{ ml: 1 }}
-          >
-            <ChevronRight />
-          </IconButton>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          sx={{
+            mt: 1,
+            "& .MuiPaper-root": {
+              borderRadius: "4px", // Increased border radius
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)", // Soft shadow
+              // minWidth: "160px", // Slightly wider for better spacing
+              // p: 1, // Add padding inside
+            },
+          }}
+        >
+          <MenuItem onClick={handleMenuClose}>View Details</MenuItem>
+          <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
+        </Menu>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: 16,
+          }}
+        >
+          <FormControl size="small">
+            <Select
+              value={rowsPerPage}
+              onChange={(e) => setRowsPerPage(Number(e.target.value))}
+            >
+              {[10, 25, 50].map((num) => (
+                <MenuItem key={num} value={num}>
+                  {num}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <div>
+            <IconButton
+              disabled={page === 0}
+              onClick={() => setPage(page - 1)}
+              sx={{ mr: 1 }}
+            >
+              <ChevronLeft />
+            </IconButton>
+            <span>Page {page + 1}</span>
+            <IconButton
+              disabled={
+                page >= Math.ceil(filteredData.length / rowsPerPage) - 1
+              }
+              onClick={() => setPage(page + 1)}
+              sx={{ ml: 1 }}
+            >
+              <ChevronRight />
+            </IconButton>
+          </div>
         </div>
-      </div>
-      <audio ref={audioRef} onEnded={() => setPlayingId(null)} />
-    </Card>
+        <audio ref={audioRef} onEnded={() => setPlayingId(null)} />
+      </Card>
+
+      <RightSidebar
+        menuItems={[
+          {
+            label: "New Call",
+            onClick: () => console.log("New Contact clicked"),
+          },
+        ]}
+      />
+    </>
   );
 }
 

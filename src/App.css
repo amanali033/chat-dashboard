@@ -10,6 +10,10 @@ body {
   font-family: "DM Sans", sans-serif;
 }
 
+main.wrapper > div:first-child{
+  width:100%
+}
+
 .menu_hover:hover {
   background-color: white !important;
 }

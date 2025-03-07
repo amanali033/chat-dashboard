@@ -22,7 +22,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/common/Header";
-import RightSidebar from "./components/right-side-bar";
 
 const menuItems = [
   // {
@@ -306,8 +305,10 @@ export default function Layout() {
 
         <Box
           component="main"
+          className="wrapper"
           sx={{
             flexGrow: 1,
+            display: "flex",
             mt: "64px",
             border: "1px solid #DDE1E5",
             borderRadius: "8px 0px 0px",
@@ -315,9 +316,8 @@ export default function Layout() {
             width: "100%",
           }}
         >
-          <Outlet />
+          <Outlet  />
         </Box>
-        {!isMobile && <RightSidebar />}
       </Box>
     </>
   );

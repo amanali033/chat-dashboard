@@ -12,12 +12,9 @@ import ColorAvatar from "../color-avatar/ColorAvatar";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { createAPIEndPoint } from "../../config/api/api";
+import NotFoundMessage from "../not-found-message/NotFoundMessage";
 
-const MessageList = ({
-  messages,
-  selectedMessage,
-  setSelectedMessage,
-}) => {
+const MessageList = ({ messages, selectedMessage, setSelectedMessage }) => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -50,38 +47,51 @@ const MessageList = ({
           overflowY: "auto",
         }}
       >
-        {contacts && contacts?.map((contact) => (
-          <Box key={contact.id}>
-            <ListItem
-              button
-              onClick={() => setSelectedMessage(contact)}
-              sx={{
-                cursor: "pointer",
-                bgcolor:
-                  selectedMessage?.number === contact.number ? "#F4F5F7" : "white",
-                borderLeft:
-                  selectedMessage?.number === contact.number
-                    ? "6px solid #146ef5"
-                    : "6px solid transparent",
-              }}
-            >
-              <ListItemAvatar>
-                <ColorAvatar name={contact.initials} />
-              </ListItemAvatar>
+        {contacts && contacts.length > 0 ? (
+          contacts.map((contact) => (
+            <Box key={contact.id}>
+              <ListItem
+                button
+                onClick={() => setSelectedMessage(contact)}
+                sx={{
+                  cursor: "pointer",
+                  bgcolor:
+                    selectedMessage?.number === contact.number
+                      ? "#F4F5F7"
+                      : "white",
+                  borderLeft:
+                    selectedMessage?.number === contact.number
+                      ? "6px solid #146ef5"
+                      : "6px solid transparent",
+                }}
+              >
+                <ListItemAvatar>
+                  <ColorAvatar name={contact.initials} />
+                </ListItemAvatar>
 
-              <ListItemText
-                primary={contact.number ? contact.number : "Unknown"}
-                secondary={contact.text}
-                primaryTypographyProps={{ fontWeight: "bold" }}
-                secondaryTypographyProps={{ color: "body1" }}
-              />
-              <Typography variant="body2" color="#424952" fontSize={12} mt={-2}>
-                {contact.last_message_at ? contact.last_message_at : "00:00 PM"}
-              </Typography>
-            </ListItem>
-            <Divider />
-          </Box>
-        ))}
+                <ListItemText
+                  primary={contact.number ? contact.number : "Unknown"}
+                  secondary={contact.text}
+                  primaryTypographyProps={{ fontWeight: "bold" }}
+                  secondaryTypographyProps={{ color: "body1" }}
+                />
+                <Typography
+                  variant="body2"
+                  color="#424952"
+                  fontSize={12}
+                  mt={-2}
+                >
+                  {contact.last_message_at
+                    ? contact.last_message_at
+                    : "00:00 PM"}
+                </Typography>
+              </ListItem>
+              <Divider />
+            </Box>
+          ))
+        ) : (
+          <NotFoundMessage message="No contacts found" />
+        )}
 
         {/* {messages.map((contact) => (
           <Box key={contact.id}>

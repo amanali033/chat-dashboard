@@ -11,10 +11,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ChatView from "../../../components/chat-view/ChatView";
 import RightSidebar from "../../../components/right-side-bar";
 import MessageList from "../../../components/message-list/MessageList";
-import toast from "react-hot-toast";
-import { logoutUser } from "../../../utils";
-import { useNavigate } from "react-router-dom";
-import { createAPIEndPoint } from "../../../config/api/api";
 
 const messages = [
   {
@@ -52,7 +48,6 @@ const messages = [
 ];
 
 export default function Inbox() {
-  const navigate = useNavigate();
   const [selectedMessage, setSelectedMessage] = useState(null);
   console.log(" Inbox ~ selectedMessage:", selectedMessage);
   const isMobile = useMediaQuery("(max-width: 600px)");
@@ -137,6 +132,15 @@ export default function Inbox() {
           onBack={() => setSelectedMessage(null)}
         />
       )}
+
+      <RightSidebar
+        menuItems={[
+          {
+            label: "New Contact",
+            onClick: () => console.log("New Contact clicked"),
+          },
+        ]}
+      />
     </Box>
   );
 }

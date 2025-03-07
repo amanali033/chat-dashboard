@@ -26,9 +26,9 @@ export default function MainRouter() {
         <Route
           path="/"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <Layout />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           }
         >
           <Route path="/" element={<Navigate to="/messages/inbox" />} />
