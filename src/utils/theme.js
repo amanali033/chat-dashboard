@@ -27,7 +27,8 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: "8px", // Rounded buttons for a softer UI
+          textTransform: "capitalize",
+          borderRadius: "4px", // Rounded buttons for a softer UI
           boxShadow: "none", // Removes unwanted shadows
           "&:hover": {
             boxShadow: "none", // No shadow on hover

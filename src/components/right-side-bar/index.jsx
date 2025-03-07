@@ -23,10 +23,11 @@ export default function RightSidebar({ menuItems = [] }) {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        p: 1,
+        pt: 0.25,
+        px: 1,
         gap: 1,
         borderLeft: "1px solid #DDE1E5",
-
+        minWidth: "45.35px",
         height: "100vh",
         overflow: "hidden",
         "@media (max-width:600px)": {

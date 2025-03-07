@@ -12,6 +12,7 @@ import SignIn from "./pages/auth/sign-in/SignIn";
 import ForgotPassword from "./pages/auth/forgot-password/ForgotPassword";
 import ResetPassword from "./pages/auth/reset-password/ResetPassword";
 import ProtectedRoute from "./hooks/ProtectedRoute";
+import Voicemail from "./pages/calls/voice-mails/Voicemail";
 
 export default function MainRouter() {
   return (
@@ -27,13 +28,14 @@ export default function MainRouter() {
           path="/"
           element={
             // <ProtectedRoute>
-              <Layout />
+            <Layout />
             // </ProtectedRoute>
           }
         >
           <Route path="/" element={<Navigate to="/messages/inbox" />} />
           <Route path="/messages/inbox" element={<Inbox />} />
           <Route path="/calls/recent" element={<RecentCalls />} />
+          <Route path="/calls/voicemails" element={<Voicemail />} />
         </Route>
 
         {/* 404 Page */}

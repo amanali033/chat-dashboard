@@ -13,31 +13,14 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { createAPIEndPoint } from "../../config/api/api";
 import NotFoundMessage from "../not-found-message/NotFoundMessage";
+import RingLoader from "../loaders/RingLoader";
 
-const MessageList = ({ messages, selectedMessage, setSelectedMessage }) => {
-  const [contacts, setContacts] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  const getContacts = async () => {
-    try {
-      setLoading(true);
-      const response = await createAPIEndPoint("chat-contacts").fetchAll();
-      setContacts(response.data?.contacts || []);
-      console.log("Contacts:", response.data);
-    } catch (err) {
-      console.log("Contacts:", err.response);
-      toast.error(err?.response?.data?.error || "Error fetching contacts");
-      if (err?.response?.data?.error.includes("Bearer token has expired.")) {
-        logoutUser(navigate);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getContacts();
-  }, []);
+const MessageList = ({
+  loading,
+  contacts,
+  selectedMessage,
+  setSelectedMessage,
+}) => {
 
   return (
     <Box sx={{ height: "100%" }}>
@@ -47,7 +30,9 @@ const MessageList = ({ messages, selectedMessage, setSelectedMessage }) => {
           overflowY: "auto",
         }}
       >
-        {contacts && contacts.length > 0 ? (
+        {loading ? (
+          <RingLoader />
+        ) : contacts && contacts.length > 0 ? (
           contacts.map((contact) => (
             <Box key={contact.id}>
               <ListItem
@@ -71,9 +56,12 @@ const MessageList = ({ messages, selectedMessage, setSelectedMessage }) => {
 
                 <ListItemText
                   primary={contact.number ? contact.number : "Unknown"}
-                  secondary={contact.text}
+                  secondary={contact?.last_message}
                   primaryTypographyProps={{ fontWeight: "bold" }}
-                  secondaryTypographyProps={{ color: "body1" }}
+                  secondaryTypographyProps={{
+                    color: "body1",
+                    textTransform: "lowercase",
+                  }}
                 />
                 <Typography
                   variant="body2"

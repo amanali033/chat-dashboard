@@ -24,6 +24,7 @@ import {
 import ColorAvatar from "../color-avatar/ColorAvatar";
 import ProfilePopover from "./components/ProfilePopover";
 import NotificationPopover from "./components/NotificationPopover";
+import AppMenu from "../app-menu/AppMenu";
 
 const locations = [
   "Brown Deer Village",
@@ -68,9 +69,7 @@ export default function Header({ isMobile, handleDrawerToggle }) {
               <FontAwesomeIcon icon={faBars} size="xs" />
             </IconButton>
           ) : (
-            <IconButton sx={{ border: "1px solid #DDE1E5", borderRadius: 2 }}>
-              <FontAwesomeIcon icon={faGrip} size="xs" />
-            </IconButton>
+            <AppMenu />
           )}
         </Box>
 
@@ -232,7 +231,7 @@ export default function Header({ isMobile, handleDrawerToggle }) {
           <Typography
             onClick={handleOpenPopover}
             sx={{
-              display: { xs: "block", md: "none",cursor:"pointer" },
+              display: { xs: "block", md: "none", cursor: "pointer" },
             }}
           >
             <FontAwesomeIcon icon={faEllipsisV} size="lg" color="#146EF5" />

@@ -30,17 +30,18 @@ const ChatView = ({ selectedChat, onBack }) => {
       ).fetchAll();
       const apiMessages = response.data || [];
 
-      // Transform messages to match expected structure
-      const formattedMessages = apiMessages.map((msg) => ({
-        id: msg.id,
-        text: msg.body,
-        sender: msg.direction === "outgoing" ? "user" : "clinic",
-        date: new Date(msg.created_at).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }),
-      }));
+      const formattedMessages = apiMessages
+        .filter((msg) => msg.body !== null) // Exclude messages where body is null
+        .map((msg) => ({
+          id: msg.id,
+          text: msg.body,
+          sender: msg.direction === "outgoing" ? "user" : "clinic",
+          date: new Date(msg.created_at).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+        }));
 
       setMessages(formattedMessages);
     } catch (err) {
@@ -67,11 +68,12 @@ const ChatView = ({ selectedChat, onBack }) => {
     }
   }, [messages]);
 
+  const [sending, setSending] = useState(false); // New state for message sending
+
   const handleSendMessage = async () => {
     if (message.trim() === "") return;
 
     const newMessage = {
-      // id: messages.length + 1,
       text: message,
       sender: "user",
       date: new Date().toLocaleTimeString([], {
@@ -82,17 +84,31 @@ const ChatView = ({ selectedChat, onBack }) => {
     };
 
     // Optimistically update UI
-    setMessages([...messages, newMessage]);
     setMessage("");
+    setSending(true); // Set sending state
 
     try {
-      await createAPIEndPoint("send-message").create({
+      const response = await createAPIEndPoint("send-message").create({
         to: selectedChat.number,
         message,
       });
+
+      if (response.status === 200) {
+        // toast.success("Message sent successfully");
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      } else {
+        throw new Error("Failed to send message");
+      }
     } catch (error) {
       console.error("Send Message Error:", error.response);
-      toast.error("Failed to send message");
+      toast.error(error?.response?.data?.message || "Failed to send message");
+
+      // Rollback UI if sending failed
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg !== newMessage)
+      );
+    } finally {
+      setSending(false); // Reset sending state
     }
   };
 

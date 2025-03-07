@@ -11,46 +11,52 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ChatView from "../../../components/chat-view/ChatView";
 import RightSidebar from "../../../components/right-side-bar";
 import MessageList from "../../../components/message-list/MessageList";
-
-const messages = [
-  {
-    id: 1,
-    name: "Keshia Whitlow",
-    initials: "KW",
-    time: "10:52 PM",
-    text: "Yes",
-    color: "#A8E6CF",
-  },
-  {
-    id: 2,
-    name: "Ira Johnson",
-    initials: "IJ",
-    time: "10:48 PM",
-    text: "Confirm",
-    color: "#FFCAD4",
-  },
-  {
-    id: 3,
-    name: "Jayla James",
-    initials: "JJ",
-    time: "10:44 PM",
-    text: "Yes",
-    color: "#D3D3D3",
-  },
-  {
-    id: 4,
-    name: "Charlotte White",
-    initials: "CW",
-    time: "10:43 PM",
-    text: "Okay",
-    color: "#F5F5F5",
-  },
-];
+import NewContactModal from "../../../components/new-contact-modal/NewContact";
+import { createAPIEndPoint } from "../../../config/api/api";
+import toast from "react-hot-toast";
 
 export default function Inbox() {
   const [selectedMessage, setSelectedMessage] = useState(null);
-  console.log(" Inbox ~ selectedMessage:", selectedMessage);
   const isMobile = useMediaQuery("(max-width: 600px)");
+  const [contacts, setContacts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleNewContactClick = () => {
+    setOpenModal(true);
+    handleMenuClose();
+  };
+
+  const getContacts = async () => {
+    try {
+      setLoading(true);
+      const response = await createAPIEndPoint("chat-contacts").fetchAll();
+      setContacts(response.data?.contacts || []);
+      console.log("Contacts:", response.data);
+    } catch (err) {
+      console.log("Contacts:", err.response);
+      toast.error(err?.response?.data?.error || "Error fetching contacts");
+      // if (err?.response?.data?.error.includes("Bearer token has expired.")) {
+      //   logoutUser(navigate);
+      // }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getContacts();
+  }, []);
 
   return (
     <Box display="flex" height="100vh">
@@ -118,7 +124,8 @@ export default function Inbox() {
 
           {/* Messages List */}
           <MessageList
-            messages={messages}
+            loading={loading}
+            contacts={contacts}
             selectedMessage={selectedMessage}
             setSelectedMessage={setSelectedMessage}
           />
@@ -137,9 +144,16 @@ export default function Inbox() {
         menuItems={[
           {
             label: "New Contact",
-            onClick: () => console.log("New Contact clicked"),
+            onClick: () => setOpenModal(true),
           },
         ]}
+      />
+
+      {/* New Contact Modal */}
+      <NewContactModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        getContacts={getContacts}
       />
     </Box>
   );

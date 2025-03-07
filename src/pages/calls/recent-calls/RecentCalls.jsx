@@ -29,6 +29,8 @@ import {
 import ColorAvatar from "../../../components/color-avatar/ColorAvatar";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import RightSidebar from "../../../components/right-side-bar";
+import AudioPlayer from "../../../components/AudioPlayer";
+import audioUrl from "../../../../src/assets/Kalimba.mp3";
 
 const fakeData = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
@@ -63,6 +65,8 @@ const tableHeaders = [
 ];
 
 function RecentCalls() {
+  const [playingIndex, setPlayingIndex] = useState(null);
+
   const [search, setSearch] = useState("");
   const [isScrolledX, setIsScrolledX] = useState(false); // Track horizontal scroll
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -326,36 +330,13 @@ function RecentCalls() {
                     <TableCell>{row.office}</TableCell>
                     <TableCell>{row.user}</TableCell>
                     <TableCell>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                          backgroundColor: "white",
-                          padding: "0.20rem 1.5rem 0.20rem 0.75rem",
-                          border: "1px solid #ced3da",
-                          borderRadius: "30px",
-                          width: "fit-content",
-                        }}
-                      >
-                        <IconButton onClick={() => handlePlayAudio(row)}>
-                          {playingId === row.id ? <Pause /> : <PlayArrow />}
-                        </IconButton>
-                        <LinearProgress
-                          variant="determinate"
-                          value={progress[row.id] || 0}
-                          sx={{
-                            width: "100px",
-                            backgroundColor: "#b2bec3",
-                            "& .MuiLinearProgress-bar": {
-                              backgroundColor: "black",
-                            },
-                          }}
-                        />
-                        <Typography variant="body2" sx={{ minWidth: 60 }}>
-                          {audioTime[row.id] || "0:00 / 0:00"}
-                        </Typography>
-                      </div>
+                      {/* Pass unique audioUrl per row */}
+                      <AudioPlayer
+                        src={audioUrl}
+                        index={index}
+                        playingIndex={playingIndex}
+                        setPlayingIndex={setPlayingIndex}
+                      />{" "}
                     </TableCell>
                     <TableCell
                       sx={{
