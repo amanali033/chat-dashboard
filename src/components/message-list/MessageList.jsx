@@ -21,7 +21,6 @@ const MessageList = ({
   selectedMessage,
   setSelectedMessage,
 }) => {
-
   return (
     <Box sx={{ height: "100%" }}>
       <List
@@ -51,16 +50,25 @@ const MessageList = ({
                 }}
               >
                 <ListItemAvatar>
-                  <ColorAvatar name={contact.initials} />
+                  <ColorAvatar name={contact.patient_name} />
                 </ListItemAvatar>
 
                 <ListItemText
-                  primary={contact.number ? contact.number : "Unknown"}
+                  primary={
+                    contact.patient_name ? contact.patient_name : "Unknown"
+                  }
                   secondary={contact?.last_message}
                   primaryTypographyProps={{ fontWeight: "bold" }}
                   secondaryTypographyProps={{
                     color: "body1",
                     textTransform: "lowercase",
+                    sx: {
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 1, // Ensures text is clamped to 1 line
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    },
                   }}
                 />
                 <Typography
@@ -68,6 +76,7 @@ const MessageList = ({
                   color="#424952"
                   fontSize={12}
                   mt={-2}
+                  whiteSpace="nowrap"
                 >
                   {contact.last_message_at
                     ? contact.last_message_at
@@ -80,38 +89,6 @@ const MessageList = ({
         ) : (
           <NotFoundMessage message="No contacts found" />
         )}
-
-        {/* {messages.map((contact) => (
-          <Box key={contact.id}>
-            <ListItem
-              button
-              onClick={() => setSelectedMessage(contact)}
-              sx={{
-                cursor: "pointer",
-                bgcolor: selectedMessage?.id === contact.id ? "#F4F5F7" : "white",
-                borderLeft:
-                  selectedMessage?.id === contact.id
-                    ? "6px solid #146ef5"
-                    : "6px solid transparent",
-              }}
-            >
-              <ListItemAvatar>
-                <ColorAvatar name={contact.initials} />
-              </ListItemAvatar>
-
-              <ListItemText
-                primary={contact.name}
-                secondary={contact.text}
-                primaryTypographyProps={{ fontWeight: "bold" }}
-                secondaryTypographyProps={{ color: "body1" }}
-              />
-              <Typography variant="body2" color="#424952" fontSize={12} mt={-2}>
-                {contact.time}
-              </Typography>
-            </ListItem>
-            <Divider />
-          </Box>
-        ))} */}
       </List>
     </Box>
   );

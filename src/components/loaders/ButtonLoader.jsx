@@ -5,7 +5,7 @@ function ButtonLoader({ color = "white" }) {
   return (
     <>
       <CircularProgress
-        size="20px"
+        size="24px"
         thickness={4}
         color={color}
         style={{

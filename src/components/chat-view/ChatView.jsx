@@ -13,8 +13,9 @@ import RingLoader from "../loaders/RingLoader";
 import ColorAvatar from "../color-avatar/ColorAvatar";
 import { createAPIEndPoint } from "../../config/api/api";
 import toast from "react-hot-toast";
+import UserSearch from "./component/UserSearch";
 
-const ChatView = ({ selectedChat, onBack }) => {
+const ChatView = ({ selectedChat, onBack, contacts }) => {
   const isMobile = useMediaQuery("(max-width: 992px)");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -114,6 +115,7 @@ const ChatView = ({ selectedChat, onBack }) => {
 
   return (
     <Box display="flex" flexDirection="column" height="100vh" width="100%">
+      <UserSearch users={contacts} />
       {selectedChat ? (
         <Box
           sx={{
@@ -149,10 +151,12 @@ const ChatView = ({ selectedChat, onBack }) => {
               </IconButton>
             )}
 
-            <ColorAvatar name={selectedChat?.initials} />
+            <ColorAvatar name={selectedChat?.patient_name} />
             <Box flex={1}>
               <Typography fontWeight="bold">
-                {selectedChat.number ? selectedChat.number : "Unknown"}
+                {selectedChat.patient_name
+                  ? selectedChat.patient_name
+                  : "Unknown"}
               </Typography>
             </Box>
             <IconButton

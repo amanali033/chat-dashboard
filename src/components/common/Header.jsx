@@ -228,14 +228,16 @@ export default function Header({ isMobile, handleDrawerToggle }) {
           </Popover>
 
           {/* More Options Button (Three dots) */}
-          <Typography
-            onClick={handleOpenPopover}
-            sx={{
-              display: { xs: "block", md: "none", cursor: "pointer" },
-            }}
-          >
-            <FontAwesomeIcon icon={faEllipsisV} size="lg" color="#146EF5" />
-          </Typography>
+          {isMobile && (
+            <Typography
+              onClick={handleOpenPopover}
+              sx={{
+                cursor: "pointer",
+              }}
+            >
+              <FontAwesomeIcon icon={faEllipsisV} size="lg" color="#146EF5" />
+            </Typography>
+          )}
         </Box>
       </Toolbar>
 

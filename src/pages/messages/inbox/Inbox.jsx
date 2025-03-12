@@ -135,6 +135,7 @@ export default function Inbox() {
       {/* Show chat only when a message is selected on mobile */}
       {(!isMobile || selectedMessage) && (
         <ChatView
+          contacts={contacts}
           selectedChat={selectedMessage}
           onBack={() => setSelectedMessage(null)}
         />

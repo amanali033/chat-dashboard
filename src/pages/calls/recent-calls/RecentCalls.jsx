@@ -31,6 +31,7 @@ import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import RightSidebar from "../../../components/right-side-bar";
 import AudioPlayer from "../../../components/AudioPlayer";
 import audioUrl from "../../../../src/assets/Kalimba.mp3";
+import TimeFrame from "../../../components/time-frame/TimeFrameFilter";
 
 const fakeData = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
@@ -241,11 +242,7 @@ function RecentCalls() {
             marginBottom: 16,
           }}
         >
-          <FormControl size="small">
-            <Select defaultValue="Time Period">
-              <MenuItem value="Time Period">Time Period</MenuItem>
-            </Select>
-          </FormControl>
+          <TimeFrame />
           <div style={{ display: "flex", gap: 8 }}>
             <TextField
               size="small"
@@ -290,7 +287,7 @@ function RecentCalls() {
                 transition: "box-shadow 0.2s ease-in-out",
               }}
             >
-              <TableRow>
+              <TableRow sx={{ whiteSpace: "nowrap" }}>
                 {tableHeaders.map((header, index) => (
                   <TableCell
                     key={index}
@@ -310,8 +307,8 @@ function RecentCalls() {
             </TableHead>
             <TableBody>
               {paginatedData.length > 0 ? (
-                paginatedData.map((row) => (
-                  <TableRow key={row.id}>
+                paginatedData.map((row, index) => (
+                  <TableRow key={row.id || index} sx={{ whiteSpace: "nowrap" }}>
                     <TableCell>
                       <div
                         style={{

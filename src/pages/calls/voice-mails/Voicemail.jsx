@@ -276,7 +276,7 @@ function Voicemails() {
                 transition: "box-shadow 0.2s ease-in-out",
               }}
             >
-              <TableRow>
+              <TableRow sx={{ whiteSpace: "nowrap" }}>
                 {tableHeaders.map((header, index) => (
                   <TableCell
                     key={index}
@@ -296,7 +296,7 @@ function Voicemails() {
             </TableHead>
             <TableBody>
               {filteredData.map((row, index) => (
-                <TableRow key={row.id || index}>
+                <TableRow key={row.id || index} sx={{ whiteSpace: "nowrap" }}>
                   {" "}
                   {/* Ensure unique key */}
                   <TableCell>

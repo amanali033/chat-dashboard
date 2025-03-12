@@ -67,6 +67,7 @@ export default function Layout() {
   const [selectedMenu, setSelectedMenu] = useState(menuItems[0]);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  console.log(" Layout ~ location:", location.pathname)
   const isMobile = useMediaQuery("(max-width: 992px)");
 
   const handleDrawerToggle = () => {
@@ -83,6 +84,16 @@ export default function Layout() {
   useEffect(() => {
     handleDrawerToggle();
   }, [navigate]);
+
+  useEffect(() => {
+    const activeMenu = menuItems.find((item) =>
+      item.subItems.some((subItem) => subItem.path === location.pathname)
+    );
+
+    if (activeMenu) {
+      setSelectedMenu(activeMenu);
+    }
+  }, [location.pathname]);
 
   return (
     <>
@@ -148,7 +159,7 @@ export default function Layout() {
               }}
             >
               <div>
-                {menuItems.map((item, index) => (
+                {menuItems?.map((item, index) => (
                   <ListItem
                     button
                     key={index}
@@ -210,7 +221,7 @@ export default function Layout() {
                   {selectedMenu.label}
                 </Typography>
                 <List>
-                  {selectedMenu.subItems.map((subItem, subIndex) => {
+                  {selectedMenu?.subItems?.map((subItem, subIndex) => {
                     const isActive = location.pathname === subItem.path;
 
                     return (
@@ -242,15 +253,33 @@ export default function Layout() {
             <>
               <Box sx={{ flexGrow: 1 }} />
               <ListItem
+                className="menu_hover"
                 button
                 sx={{
                   flexDirection: "column",
                   alignItems: "center",
+                  cursor: "pointer",
                   mb: 2,
-                  color: "text.secondary",
+                  color:
+                    location.pathname === "/settings/change-password"
+                      ? "#146ef5"
+                      : "#202328",
+                  backgroundColor:
+                    location.pathname === "/settings/change-password"
+                      ? "#fff"
+                      : "",
                 }}
+                onClick={() => navigate("/settings/change-password")}
               >
-                <ListItemIcon sx={{ justifyContent: "center" }}>
+                <ListItemIcon
+                  sx={{
+                    justifyContent: "center",
+                    color:
+                      location.pathname === "/settings/change-password"
+                        ? "#146ef5"
+                        : "#202328",
+                  }}
+                >
                   <FontAwesomeIcon icon={faCog} size="md" />
                 </ListItemIcon>
                 <Typography variant="caption" sx={{ fontSize: 12 }}>
@@ -276,7 +305,7 @@ export default function Layout() {
               {selectedMenu.label}
             </Typography>
             <List>
-              {selectedMenu.subItems.map((subItem, subIndex) => {
+              {selectedMenu?.subItems?.map((subItem, subIndex) => {
                 const isActive = location.pathname === subItem.path;
                 return (
                   <ListItem
@@ -311,12 +340,12 @@ export default function Layout() {
             display: "flex",
             mt: "64px",
             border: "1px solid #DDE1E5",
-            borderRadius: "8px 0px 0px",
+            borderRadius: isMobile ? "0px" : "8px 0px 0px",
             overflow: "hidden",
             width: "100%",
           }}
         >
-          <Outlet  />
+          <Outlet />
         </Box>
       </Box>
     </>

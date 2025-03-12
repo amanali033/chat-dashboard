@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar } from "@mui/material";
 
 const colorMap = {
+  initial: { bg: "#E7EBEE", text: "#202328" },
   A: { bg: "#FFCDD2", text: "#D32F2F" },
   B: { bg: "#F8BBD0", text: "#C2185B" },
   C: { bg: "#E1BEE7", text: "#7B1FA2" },
@@ -31,21 +32,17 @@ const colorMap = {
 };
 
 const ColorAvatar = ({ name }) => {
-  //   const initials = name
-  //     ? name
-  //         .split(" ")
-  //         .map((n) => n[0])
-  //         .slice(0, 2)
-  //         .join("")
-  //         .toUpperCase()
-  //     : "?";
-  const initials = name;
+  const initials = name
+    ? name
+        .split(" ")
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "?"; // Default if no name provided
 
-  const firstChar = name ? name[0].toUpperCase() : "A";
-  const { bg, text } = colorMap[firstChar] || {
-    bg: "#E0E0E0",
-    text: "#616161",
-  };
+  const firstChar = name ? name[0].toUpperCase() : null;
+  const { bg, text } = colorMap[firstChar] || colorMap["initial"];
 
   return (
     <Avatar

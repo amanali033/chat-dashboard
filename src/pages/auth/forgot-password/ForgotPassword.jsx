@@ -59,6 +59,7 @@ const ForgotPassword = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        overflowY: "auto",
       }}
     >
       <Container component="main" maxWidth="xs">

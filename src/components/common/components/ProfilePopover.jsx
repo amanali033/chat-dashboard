@@ -7,6 +7,17 @@ import ColorAvatar from "../../color-avatar/ColorAvatar";
 import { useNavigate } from "react-router-dom";
 
 const ProfilePopover = () => {
+  let user = null;
+  if (typeof localStorage !== "undefined") {
+    try {
+      user = JSON.parse(localStorage.getItem("user_profile") || "null");
+    } catch (error) {
+      console.error("Error parsing user_profile from localStorage:", error);
+      user = null;
+    }
+  }
+
+  const userName = `${user.first_name} ${user.last_name}`;
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -36,7 +47,7 @@ const ProfilePopover = () => {
           cursor: "pointer",
         }}
       >
-        <ColorAvatar name="SC" />
+        <ColorAvatar name={userName} />
         <ArrowDropDownIcon
           color="action"
           sx={{ position: "relative", left: "-7px", bottom: "-5px" }}
@@ -60,7 +71,10 @@ const ProfilePopover = () => {
       >
         <div>
           <MenuItem
-            onClick={handleClose}
+            onClick={() => {
+              navigate("/user-profile");
+              handleClose();
+            }}
             style={{ display: "flex", alignItems: "center" }}
           >
             <PersonIcon style={{ marginRight: "10px" }} color="primary" />

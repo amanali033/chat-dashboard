@@ -1,77 +1,76 @@
 import React, { useState } from "react";
 import {
-  Box,
-  Button,
   Container,
-  TextField,
-  Typography,
-  Avatar,
   CssBaseline,
   Paper,
+  Avatar,
+  Typography,
+  TextField,
+  Button,
   IconButton,
   InputAdornment,
-  Link,
 } from "@mui/material";
-import LockIcon from "@mui/icons-material/Lock";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import LockResetIcon from "@mui/icons-material/LockReset";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { createAPIEndPointAuth } from "../../../config/api/apiAuth";
-import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { createAPIEndPointAuth } from "../../../config/api/apiAuth";
 import toast from "react-hot-toast";
-import ButtonLoader from "../../../components/loaders/ButtonLoader";
 import { getUserData } from "../../../utils";
+import ButtonLoader from "../../../components/loaders/ButtonLoader";
 
-const ResetPassword = () => {
-  const navigate = useNavigate();
+const ChangePassword = () => {
   const userData = getUserData();
+  const userId = userData?.id ?? null;
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const handleTogglePassword = () => setShowPassword(!showPassword);
-  const handleToggleConfirmPassword = () =>
-    setShowConfirmPassword(!showConfirmPassword);
-
-  const validationSchema = Yup.object().shape({
-    newPassword: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .required("New password is required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
-      .required("Confirm password is required"),
+  const [showPassword, setShowPassword] = useState({
+    currentPassword: false,
+    newPassword: false,
   });
 
-  const handleResetPassword = async (values) => {
-    try {
-      setLoading(true);
-      const data = {
-        user_id: userData?.id,
-        new_password: values.newPassword,
-        confirm_password: values.confirmPassword,
-      };
-
-      const response = await createAPIEndPointAuth(
-        "admin_change_password"
-      ).create(data);
-      toast.success(response.data.message || "Password reset successfully!");
-      navigate("/auth/sign-in");
-    } catch (error) {
-      toast.error(
-        error?.response?.data?.error ||
-          "Failed to reset password. Please try again."
-      );
-    } finally {
-      setLoading(false);
-    }
+  const togglePasswordVisibility = (field) => {
+    setShowPassword((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
   };
 
   const formik = useFormik({
-    initialValues: { newPassword: "", confirmPassword: "" },
-    validationSchema,
-    onSubmit: (values) => handleResetPassword(values),
+    initialValues: {
+      currentPassword: "",
+      newPassword: "",
+    },
+    validationSchema: Yup.object({
+      currentPassword: Yup.string().required("Current password is required"),
+      newPassword: Yup.string()
+        .min(6, "Password must be at least 6 characters")
+        .required("New password is required"),
+    }),
+    onSubmit: async (values, { setSubmitting, resetForm }) => {
+      setLoading(true);
+      try {
+        const data = {
+          old_password: values.currentPassword,
+          new_password: values.newPassword,
+        };
+        await createAPIEndPointAuth(`user/change_password/`).update(
+          userId,
+          data
+        );
+
+        toast.success("Password updated successfully");
+        resetForm();
+      } catch (error) {
+        toast.error(
+          error?.response?.data?.error ||
+            "Failed to change password. Please try again."
+        );
+      } finally {
+        setSubmitting(false);
+        setLoading(false);
+      }
+    },
   });
 
   return (
@@ -89,7 +88,7 @@ const ResetPassword = () => {
         <Paper
           elevation={6}
           sx={{
-            marginTop: 8,
+            marginBlock: 8,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -99,7 +98,7 @@ const ResetPassword = () => {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-            <LockIcon />
+            <LockResetIcon />
           </Avatar>
           <Typography
             variant="h5"
@@ -107,10 +106,7 @@ const ResetPassword = () => {
             color="primary"
             gutterBottom
           >
-            Reset Password
-          </Typography>
-          <Typography variant="body2" textAlign="center" gutterBottom>
-            Enter your new password below.
+            Change Password
           </Typography>
           <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
             <TextField
@@ -118,8 +114,44 @@ const ResetPassword = () => {
               variant="outlined"
               margin="normal"
               fullWidth
+              label="Current Password"
+              type={showPassword.currentPassword ? "text" : "password"}
+              {...formik.getFieldProps("currentPassword")}
+              error={
+                formik.touched.currentPassword &&
+                Boolean(formik.errors.currentPassword)
+              }
+              helperText={
+                formik.touched.currentPassword && formik.errors.currentPassword
+              }
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() =>
+                        togglePasswordVisibility("currentPassword")
+                      }
+                      edge="end"
+                    >
+                      {showPassword.currentPassword ? (
+                        <VisibilityOff
+                          sx={{ fontSize: 15, color: "#bdc3c7" }}
+                        />
+                      ) : (
+                        <Visibility sx={{ fontSize: 15, color: "#bdc3c7" }} />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              size="small"
+              variant="outlined"
+              margin="normal"
+              fullWidth
               label="New Password"
-              type={showPassword ? "text" : "password"}
+              type={showPassword.newPassword ? "text" : "password"}
               {...formik.getFieldProps("newPassword")}
               error={
                 formik.touched.newPassword && Boolean(formik.errors.newPassword)
@@ -130,42 +162,11 @@ const ResetPassword = () => {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={handleTogglePassword} edge="end">
-                      {showPassword ? (
-                        <VisibilityOff
-                          sx={{ fontSize: 15, color: "#bdc3c7" }}
-                        />
-                      ) : (
-                        <Visibility sx={{ fontSize: 15, color: "#bdc3c7" }} />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              size="small"
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              label="Confirm Password"
-              type={showConfirmPassword ? "text" : "password"}
-              {...formik.getFieldProps("confirmPassword")}
-              error={
-                formik.touched.confirmPassword &&
-                Boolean(formik.errors.confirmPassword)
-              }
-              helperText={
-                formik.touched.confirmPassword && formik.errors.confirmPassword
-              }
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
                     <IconButton
-                      onClick={handleToggleConfirmPassword}
+                      onClick={() => togglePasswordVisibility("newPassword")}
                       edge="end"
                     >
-                      {showConfirmPassword ? (
+                      {showPassword.newPassword ? (
                         <VisibilityOff
                           sx={{ fontSize: 15, color: "#bdc3c7" }}
                         />
@@ -177,6 +178,7 @@ const ResetPassword = () => {
                 ),
               }}
             />
+
             <Button
               fullWidth
               variant="contained"
@@ -190,22 +192,13 @@ const ResetPassword = () => {
               }}
               type={!loading ? "submit" : "button"}
             >
-              {loading ? <ButtonLoader /> : "Reset Password"}
+              {loading ? <ButtonLoader /> : "Change Password"}
             </Button>
           </form>
-          <Link
-            href="/auth/login"
-            variant="body2"
-            display="flex"
-            alignItems="center"
-            sx={{ mt: 2, textDecoration: "none" }}
-          >
-            <ArrowBackIcon fontSize="small" sx={{ mr: 1 }} /> Back to Login
-          </Link>
         </Paper>
       </Container>
     </div>
   );
 };
 
-export default ResetPassword;
+export default ChangePassword;

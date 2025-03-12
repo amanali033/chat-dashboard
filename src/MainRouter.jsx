@@ -13,6 +13,8 @@ import ForgotPassword from "./pages/auth/forgot-password/ForgotPassword";
 import ResetPassword from "./pages/auth/reset-password/ResetPassword";
 import ProtectedRoute from "./hooks/ProtectedRoute";
 import Voicemail from "./pages/calls/voice-mails/Voicemail";
+import Profile from "./pages/user/profile/Profile";
+import ChangePassword from "./pages/user/change-password/ChangePassword";
 
 export default function MainRouter() {
   return (
@@ -32,7 +34,15 @@ export default function MainRouter() {
             // </ProtectedRoute>
           }
         >
+          {/* user pages  */}
+          <Route path="/user-profile" element={<Profile />} />
+          <Route
+            path="/settings/change-password"
+            element={<ChangePassword />}
+          />
+
           <Route path="/" element={<Navigate to="/messages/inbox" />} />
+
           <Route path="/messages/inbox" element={<Inbox />} />
           <Route path="/calls/recent" element={<RecentCalls />} />
           <Route path="/calls/voicemails" element={<Voicemail />} />
