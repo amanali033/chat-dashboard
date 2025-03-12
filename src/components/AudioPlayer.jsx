@@ -59,16 +59,15 @@ const AudioPlayer = ({ src, index, playingIndex, setPlayingIndex }) => {
   };
 
   const handleSeek = (e) => {
-    const newTime = e.target.value;
+    const newTime = parseFloat(e.target.value); // Ensure it's a number
     audioRef.current.currentTime = newTime;
     setCurrentTime(newTime);
-    updateProgressBar(newTime);
   };
 
   const updateProgressBar = (time) => {
     if (rangeRef.current) {
       const progress = (time / duration) * 100 || 0;
-      rangeRef.current.style.background = `linear-gradient(to right, #146ef5 ${progress}%, rgb(161, 168, 176) ${progress}%)`;
+      rangeRef.current.style.background = `linear-gradient(to right, #146ef5 ${progress}%, #d3d3d3 ${progress}%)`;
     }
   };
 
