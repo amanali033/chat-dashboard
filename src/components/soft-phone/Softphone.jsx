@@ -23,7 +23,7 @@ import { createAPIEndPoint } from "../../config/api/api";
 import Draggable from "react-draggable";
 
 const Softphone = ({ isOpen, onClose }) => {
-  const [phoneNumber, setPhoneNumber] = useState("+14376652985");
+  const [phoneNumber, setPhoneNumber] = useState("+17739488924");
   const [error, setError] = useState(""); // Store error message
 
   const handleButtonClick = (value) => {
@@ -234,7 +234,7 @@ const Softphone = ({ isOpen, onClose }) => {
           variant="h6"
           gutterBottom
           color="primary"
-          mt={2}
+          //   mt={2}
           fontWeight="bold"
         >
           {" "}
@@ -243,7 +243,7 @@ const Softphone = ({ isOpen, onClose }) => {
         <Box
           sx={{
             py: 1,
-            px: 2.5,
+            px: 3,
           }}
         >
           <TextField
@@ -262,7 +262,8 @@ const Softphone = ({ isOpen, onClose }) => {
             sx={{
               mb: 1,
               "& .MuiOutlinedInput-root": {
-                borderRadius: "35px", // Input fields with rounded edges
+                color: "#313133",
+                borderRadius: "12px", // Input fields with rounded edges
               },
             }}
           />
@@ -311,7 +312,7 @@ const Softphone = ({ isOpen, onClose }) => {
           </Grid>
           <Grid item xs={4}></Grid>
         </Grid>
-        <Box display="flex" justifyContent="space-between" px={3} mt={'-45px'}>
+        <Box display="flex" justifyContent="space-between" px={3} mt={"-45px"}>
           <IconButton
             onClick={() =>
               setPhoneNumber((prev) =>
@@ -353,6 +354,8 @@ const Softphone = ({ isOpen, onClose }) => {
                 width: 45,
                 height: 45,
                 borderRadius: "50%",
+                // boxShadow:
+                //   "rgb(78, 159, 62) 3px 3px 6px 0px inset,rgb(78, 159, 62) -3px -3px 6px 1px inset",
                 "&:hover": { bgcolor: "#388e3c" },
               }}
               disabled={phoneNumber.length <= 1 || isDialing}
@@ -383,7 +386,7 @@ const Softphone = ({ isOpen, onClose }) => {
           onClick={onClose}
           sx={{
             mt: 4,
-            mb: 3,
+            mb: 2,
             mx: 1,
             // width: "100%",
             backgroundColor: "#ff4d4d", // Soft red (Tailwind's red-400 equivalent)
