@@ -12,14 +12,17 @@ export const createAPIEndPoint = (endpoint) => {
       axios.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-API-Key': X_API_Key
-        }
+          'X-API-Key': X_API_Key,
+          "ngrok-skip-browser-warning": "true",
+        },
+
       }),
     create: (newRecord) =>
       axios.post(url, newRecord, {
         headers: {
           Authorization: `Bearer ${token}`,
           'X-API-Key': X_API_Key, // Ensure this is correctly defined
+          "ngrok-skip-browser-warning": "true",
         },
         withCredentials: true, // Ensure this is allowed by the backend
       }),
@@ -28,21 +31,24 @@ export const createAPIEndPoint = (endpoint) => {
       axios.get(url + id, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-API-Key': X_API_Key
+          'X-API-Key': X_API_Key,
+          "ngrok-skip-browser-warning": "true",
         }
       }),
     delete: (id) =>
       axios.delete(url + id, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-API-Key': X_API_Key
+          'X-API-Key': X_API_Key,
+          "ngrok-skip-browser-warning": "true",
         }
       }),
     fetchFiltered: (params) =>
       axios.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'X-API-Key': X_API_Key
+          'X-API-Key': X_API_Key,
+          "ngrok-skip-browser-warning": "true",
         },
         params
       }),
@@ -54,19 +60,11 @@ export const createAPIEndPoint = (endpoint) => {
         token !== null && {
           headers: {
             Authorization: `Bearer ${token}`,
-            'X-API-Key': X_API_Key
-
+            'X-API-Key': X_API_Key,
+            "ngrok-skip-browser-warning": "true",
           },
         }
       ),
-
-    // uploadFile: (formData) =>
-    //   axios.post(`${BASE_URL}/file/upload`, formData, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //       'X-API-Key': X_API_Key,
-    //     },
-    //   }),
 
   };
 };

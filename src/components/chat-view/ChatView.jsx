@@ -115,7 +115,7 @@ const ChatView = ({ selectedChat, onBack, contacts }) => {
 
   return (
     <Box display="flex" flexDirection="column" height="100vh" width="100%">
-      <UserSearch users={contacts} />
+      {/* <UserSearch users={contacts} /> */}
       {selectedChat ? (
         <Box
           sx={{

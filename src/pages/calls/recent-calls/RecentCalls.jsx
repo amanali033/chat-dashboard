@@ -32,6 +32,9 @@ import RightSidebar from "../../../components/right-side-bar";
 import AudioPlayer from "../../../components/AudioPlayer";
 import audioUrl from "../../../../src/assets/Kalimba.mp3";
 import TimeFrame from "../../../components/time-frame/TimeFrameFilter";
+import Softphone from "../../../components/soft-phone/Softphone";
+import { createAPIEndPoint } from "../../../config/api/api";
+import toast from "react-hot-toast";
 
 const fakeData = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
@@ -75,6 +78,8 @@ function RecentCalls() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
 
+  const [isSoftphoneOpen, setSoftphoneOpen] = useState(false);
+
   const handleMenuOpen = (event, row) => {
     setAnchorEl(event.currentTarget);
     setSelectedRow(row);
@@ -107,6 +112,32 @@ function RecentCalls() {
     const sec = Math.floor(seconds % 60);
     return `${min}:${sec < 10 ? "0" : ""}${sec}`;
   };
+
+  const [callLogs, setCallLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  console.log(" RecentCalls ~ callLogs:", callLogs);
+
+  const getRecentCalls = async () => {
+    try {
+      setLoading(true);
+      const response = await createAPIEndPoint("call-logs").fetchAll();
+      console.log("Call logs:", response.data);
+      setCallLogs(response.data || []);
+    } catch (err) {
+      console.log("Call logs:", err.response);
+      toast.error(err?.response?.data?.error || "Error fetching call logs");
+      // if (err?.response?.data?.error.includes("Bearer token has expired.")) {
+      //   logoutUser(navigate);
+      // }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getRecentCalls();
+  }, []);
 
   useEffect(() => {
     const audioElements = {};
@@ -432,10 +463,17 @@ function RecentCalls() {
         menuItems={[
           {
             label: "New Call",
-            onClick: () => console.log("New Contact clicked"),
+            onClick: () => setSoftphoneOpen(true),
           },
         ]}
       />
+
+      {isSoftphoneOpen && (
+        <Softphone
+          isOpen={isSoftphoneOpen}
+          onClose={() => setSoftphoneOpen(false)}
+        />
+      )}
     </>
   );
 }
