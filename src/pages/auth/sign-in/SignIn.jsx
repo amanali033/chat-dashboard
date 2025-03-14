@@ -9,6 +9,8 @@ import {
   Avatar,
   CssBaseline,
   Paper,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createAPIEndPointAuth } from "../../../config/api/apiAuth";
@@ -19,6 +21,8 @@ import * as Yup from "yup";
 import OTPInput from "react-otp-input";
 import toast from "react-hot-toast";
 import ButtonLoader from "../../../components/loaders/ButtonLoader";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { logoutUser } from "../../../utils";
 
 const SignIn = () => {
@@ -31,6 +35,12 @@ const SignIn = () => {
   const [tempToken, setTempToken] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const [dontShowMessage, setDontShowMessage] = useState(false);
 
@@ -208,13 +218,33 @@ const SignIn = () => {
                   margin="normal"
                   fullWidth
                   label="Password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   {...formik.getFieldProps("password")}
                   error={
                     formik.touched.password && Boolean(formik.errors.password)
                   }
                   helperText={formik.touched.password && formik.errors.password}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={togglePasswordVisibility}
+                          edge="end"
+                        >
+                          {showPassword ? (
+                            <VisibilityOff
+                              sx={{ fontSize: 15, color: "#bdc3c7" }}
+                            />
+                          ) : (
+                            <Visibility
+                              sx={{ fontSize: 15, color: "#bdc3c7" }}
+                            />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
                 <Link
                   href="/auth/forgot-password"

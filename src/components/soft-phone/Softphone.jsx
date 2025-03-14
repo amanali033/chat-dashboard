@@ -196,8 +196,8 @@ const Softphone = ({ isOpen, onClose }) => {
     <Box
       sx={{
         position: "fixed",
-        bottom: 20,
-        right: 20,
+        bottom: 10,
+        right: 30,
         zIndex: 1000, // Keep it on top
       }}
     >
@@ -208,10 +208,10 @@ const Softphone = ({ isOpen, onClose }) => {
           pt: 3,
           mb: 2,
           //   px: 0.5,
-          width: 280,
+          width: 240,
           textAlign: "center",
           //   border: "5px solid #5d9eff",
-          boxShadow: "0 0 0 10px #e9ebec, 0 0 0 11px #e9ebec !important",
+          boxShadow: " 0 0 0 10px #e9ebec, 0 0 0 11px #e9ebec !important",
           //   boxShadow:
           //     "rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px !important",
         }}
@@ -257,7 +257,7 @@ const Softphone = ({ isOpen, onClose }) => {
             inputProps={{
               inputMode: "tel",
               pattern: "[0-9+]*",
-              style: { textAlign: "center", fontSize: 20 },
+              style: { textAlign: "center", fontSize: 18, fontWeight: "600" },
             }}
             sx={{
               mb: 1,
@@ -274,8 +274,8 @@ const Softphone = ({ isOpen, onClose }) => {
               <Button
                 variant="contained"
                 sx={{
-                  width: 45, // Adjust size
-                  height: 45, // Same as width for round shape
+                  width: 35, // Adjust size
+                  height: 35, // Same as width for round shape
                   fontSize: 16,
                   borderRadius: "50%", // Ensures the button is completely circular
                   minWidth: "unset", // Prevents default Material-UI button stretching
@@ -295,8 +295,8 @@ const Softphone = ({ isOpen, onClose }) => {
             <Button
               variant="contained"
               sx={{
-                width: 45, // Adjust size
-                height: 45, // Same as width for round shape
+                width: 35, // Adjust size
+                height: 35, // Same as width for round shape
                 fontSize: 16,
                 borderRadius: "50%", // Ensures the button is completely circular
                 minWidth: "unset", // Prevents default Material-UI button stretching
@@ -312,7 +312,12 @@ const Softphone = ({ isOpen, onClose }) => {
           </Grid>
           <Grid item xs={4}></Grid>
         </Grid>
-        <Box display="flex" justifyContent="space-between" px={3} mt={"-45px"}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          px={2.8}
+          mt={"-35px"}
+        >
           <IconButton
             onClick={() =>
               setPhoneNumber((prev) =>
@@ -322,8 +327,8 @@ const Softphone = ({ isOpen, onClose }) => {
             sx={{
               bgcolor: "#f44336",
               color: "white",
-              width: 45,
-              height: 45,
+              width: 35,
+              height: 35,
               borderRadius: "50%",
               "&:hover": { bgcolor: "#d32f2f" },
             }}
@@ -337,8 +342,8 @@ const Softphone = ({ isOpen, onClose }) => {
               sx={{
                 bgcolor: "#d32f2f",
                 color: "white",
-                width: 45,
-                height: 45,
+                width: 35,
+                height: 35,
                 borderRadius: "50%",
                 "&:hover": { bgcolor: "#b71c1c" },
               }}
@@ -351,20 +356,26 @@ const Softphone = ({ isOpen, onClose }) => {
               sx={{
                 bgcolor: "#4caf50",
                 color: "white",
-                width: 45,
-                height: 45,
+                width: 35,
+                height: 35,
                 borderRadius: "50%",
+                "&.Mui-disabled": {
+                  bgcolor: "#E9EBEC", // Custom gray background for disabled state
+                  color: "#b0bec5", // Custom text color for disabled state
+                  opacity: 0.5, // Optional: reduce opacity
+                },
                 // boxShadow:
                 //   "rgb(78, 159, 62) 3px 3px 6px 0px inset,rgb(78, 159, 62) -3px -3px 6px 1px inset",
                 "&:hover": { bgcolor: "#388e3c" },
               }}
               disabled={phoneNumber.length <= 1 || isDialing}
             >
-              {isDialing ? (
+              <Phone sx={{ fontSize: 18 }} />
+              {/* {isDialing ? (
                 <CircularProgress size={24} color="inherit" />
               ) : (
                 <Phone sx={{ fontSize: 18 }} />
-              )}
+              )} */}
             </IconButton>
           )}
 
@@ -373,8 +384,8 @@ const Softphone = ({ isOpen, onClose }) => {
             sx={{
               bgcolor: "#f44336",
               color: "white",
-              width: 45,
-              height: 45,
+              width: 35,
+              height: 35,
               borderRadius: "50%",
               "&:hover": { bgcolor: "#d32f2f" },
             }}

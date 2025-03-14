@@ -50,6 +50,7 @@ const menuItems = [
       { label: "Recent Calls", path: "/calls/recent" },
       { label: "Voicemails", path: "/calls/voicemails" },
       { label: "Call Queue Data", path: "/calls/queue-data" },
+      { label: "AI Calls", path: "/calls/ai-calls" },
     ],
   },
   // {
